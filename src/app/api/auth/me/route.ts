@@ -43,4 +43,3 @@ export async function GET() {
     return ApiErrors.internal("Failed to retrieve profile.");
   }
 }
-

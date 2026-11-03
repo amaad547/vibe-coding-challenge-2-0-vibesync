@@ -87,4 +87,3 @@ SessionSchema.index({ "roster.playerId": 1, sport: 1, status: 1 });
 
 export const Session: Model<ISession> =
   mongoose.models.Session || mongoose.model<ISession>("Session", SessionSchema);
-

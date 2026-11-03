@@ -11,7 +11,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "test:db": "tsx scripts/test-db-connection.ts",
     "seed": "tsx scripts/seed-users.ts",
-    "test:auth": "tsx scripts/test-auth-scenarios.ts"
+    "test:auth": "tsx scripts/test-auth-scenarios.ts",
+    "test:players": "tsx scripts/test-player-management.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

@@ -69,4 +69,3 @@ const PlayerSchema = new Schema<IPlayer>(
 
 export const Player: Model<IPlayer> =
   mongoose.models.Player || mongoose.model<IPlayer>("Player", PlayerSchema);
-

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -204,17 +205,21 @@ export default function CoachDashboardPage() {
 
         {/* Quick Reference Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center mb-4">
-                <Users className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-brand-navy">Player Directory</h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Active players in Football, Cricket, and other registered academy sports.
-              </p>
-            </CardContent>
-          </Card>
+          <Link href="/coach/players" className="block group">
+            <Card className="h-full hover:border-brand-primary transition-colors">
+              <CardContent className="p-6">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center mb-4 group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                  <Users className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-brand-navy group-hover:text-brand-primary transition-colors">
+                  Player Directory &rarr;
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage active athletes, edit profiles, archive players, and process applications.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
           <Card>
             <CardContent className="p-6">

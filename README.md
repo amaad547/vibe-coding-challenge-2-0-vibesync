@@ -163,5 +163,20 @@ src/
 - `GET /api/coach/registrations`: Coach-only queue of pending player applications.
 - `POST /api/coach/registrations/:id/review`: Coach-only action to `APPROVE` or `REJECT` applications.
 
+## Phase 3 — Player Management & Roster Operations
+
+### Features & Security Enforcements
+
+- **Coach-Only Permission**: All player management endpoints (`/api/players*`) strictly verify the caller has the `COACH` role. Players attempting to modify verification status or other profiles are rejected with HTTP 403 `FORBIDDEN`.
+- **Search, Filters & Pagination**: Full server-side search by name (case-insensitive regex), filter by sport (`football`, `cricket`, `athletics`, `badminton`), and filter by status (`active`, `archived`, `all`), complete with pagination metadata.
+- **Roster Operations**:
+  - Direct player creation (`POST /api/players`) with optional player portal invite account.
+  - Profile updates (`PATCH /api/players/:id`) modifying name, age, sport, and status.
+  - Soft archiving (`POST /api/players/:id/archive`) which flags `isActive = false` to preserve all historical attendance and match records.
+- **Registration Approval Queue**:
+  - Tabbed interface on `/coach/players` allowing coaches to review incoming athlete applications, approve them to grant immediate login access, or reject them with documented reasons.
+- **UI States**: Real-time loading overlays, empty states for filtered queries, error handling with retry, and confirmation modals.
+
+
 
 

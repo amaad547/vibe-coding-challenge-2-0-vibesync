@@ -75,4 +75,3 @@ export async function POST(request: NextRequest) {
     return ApiErrors.internal("Failed to register player.");
   }
 }
-

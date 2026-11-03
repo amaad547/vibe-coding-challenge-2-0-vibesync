@@ -1,4 +1,6 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config();
 import { hashPassword, verifyPassword } from "../src/lib/auth/password";
 import { signSessionToken, verifySessionToken } from "../src/lib/auth/token";
 import { loginSchema, registerPlayerSchema, reviewRegistrationSchema } from "../src/lib/validation/auth";

@@ -45,4 +45,3 @@ export async function GET() {
     return ApiErrors.internal("Failed to fetch pending registrations.");
   }
 }
-

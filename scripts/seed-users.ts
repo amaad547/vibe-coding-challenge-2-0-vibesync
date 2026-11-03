@@ -1,4 +1,6 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config();
 import { connectToDatabase, disconnectDatabase } from "../src/lib/db/mongodb";
 import { User } from "../src/models/User";
 import { hashPassword } from "../src/lib/auth/password";

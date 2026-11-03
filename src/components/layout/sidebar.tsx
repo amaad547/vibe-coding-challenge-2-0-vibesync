@@ -22,11 +22,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Players", href: "/dashboard/players", icon: Users },
-  { label: "Sessions", href: "/dashboard/sessions", icon: CalendarCheck },
-  { label: "Matches", href: "/dashboard/matches", icon: Trophy },
-  { label: "Readiness", href: "/dashboard/readiness", icon: ShieldCheck },
+  { label: "Overview", href: "/coach", icon: LayoutDashboard },
+  { label: "Players", href: "/coach/players", icon: Users },
+  { label: "Sessions", href: "/coach/sessions", icon: CalendarCheck },
+  { label: "Matches", href: "/coach/matches", icon: Trophy },
+  { label: "Readiness", href: "/coach/readiness", icon: ShieldCheck },
 ];
 
 interface SidebarProps {
@@ -57,7 +57,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Header with Logo */}
         <div className="flex h-16 items-center justify-between px-6 border-b border-slate-100">
-          <SportSyncLogo size="sm" href="/dashboard" />
+          <SportSyncLogo size="sm" href="/coach" />
           <button
             type="button"
             onClick={onClose}

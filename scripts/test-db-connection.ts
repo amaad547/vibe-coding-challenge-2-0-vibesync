@@ -1,9 +1,12 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config();
+
 import mongoose from "mongoose";
 import { connectToDatabase, disconnectDatabase } from "../src/lib/db/mongodb";
 
 async function run() {
-  console.log("=== Testing MongoDB Connection Utility ===");
+  console.log("=== Testing MongoDB Atlas Connection Utility ===");
 
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -26,11 +29,13 @@ async function run() {
   }
 
   try {
-    console.log("Attempting initial connection...");
+    console.log("1. Attempting connection to MongoDB Atlas...");
     const conn1 = await connectToDatabase();
-    console.log("✅ Initial connection established. ReadyState:", mongoose.connection.readyState);
+    console.log("✅ Connection established. ReadyState:", mongoose.connection.readyState);
+    console.log("   Host:", mongoose.connection.host);
+    console.log("   Database:", mongoose.connection.name);
 
-    console.log("Testing connection reuse...");
+    console.log("\n2. Testing connection reuse (caching across invocations)...");
     const conn2 = await connectToDatabase();
     if (conn1 === conn2) {
       console.log("✅ Passed: Reused identical cached connection instance.");
@@ -39,14 +44,24 @@ async function run() {
       process.exit(1);
     }
 
+    console.log("\n3. Performing real database operation (admin ping)...");
+    const pingResult = await mongoose.connection.db?.admin().ping();
+    console.log("✅ Real database operation succeeded. Ping response:", pingResult);
+
+    console.log("\n4. Performing real collection query...");
+    const collections = await mongoose.connection.db?.listCollections().toArray();
+    console.log(
+      "✅ Collections fetched successfully:",
+      collections?.map((c) => c.name)
+    );
+
     await disconnectDatabase();
     console.log("✅ Successfully disconnected.");
-    console.log("=== MongoDB Connection Utility Test Succeeded ===");
+    console.log("\n=== MongoDB Atlas Connection Succeeded ===");
   } catch (error) {
-    console.error("❌ Connection test failed:", error);
+    console.error("❌ MongoDB Atlas Connection test failed:", error);
     process.exit(1);
   }
 }
 
 run();
-

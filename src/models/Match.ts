@@ -100,4 +100,3 @@ MatchSchema.index({ "participants.playerId": 1, date: -1 });
 
 export const Match: Model<IMatch> =
   mongoose.models.Match || mongoose.model<IMatch>("Match", MatchSchema);
-
