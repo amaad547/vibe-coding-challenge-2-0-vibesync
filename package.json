@@ -16,7 +16,8 @@
     "test:attendance": "tsx scripts/test-attendance.ts",
     "test:matches": "tsx scripts/test-matches.ts",
     "test:readiness": "tsx scripts/test-readiness.ts",
-    "test:dashboards": "tsx scripts/test-dashboards.ts"
+    "test:dashboards": "tsx scripts/test-dashboards.ts",
+    "test:acceptance": "tsx scripts/test-phase8-scenarios.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

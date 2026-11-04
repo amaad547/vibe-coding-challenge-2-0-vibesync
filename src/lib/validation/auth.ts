@@ -26,7 +26,6 @@ export const registerPlayerSchema = z.object({
     .min(2, "Sport must be at least 2 characters.")
     .max(40, "Sport must be at most 40 characters.")
     .transform((val) => val.toLowerCase()),
-  skill: z.string().trim().max(50, "Skill cannot exceed 50 characters.").optional(),
   skill: z
     .string()
     .trim()
