@@ -9,9 +9,9 @@ async function seed() {
   console.log("=== Provisioning Initial Accounts ===");
 
   const coachEmail = process.env.INITIAL_COACH_EMAIL || "coach@dumkasports.org";
-  const coachPassword = process.env.INITIAL_COACH_PASSWORD || "CoachSecurePass123!";
+  const coachPassword = process.env.INITIAL_COACH_PASSWORD || "coach@dumka123";
   const scoutEmail = process.env.INITIAL_SCOUT_EMAIL || "scout@dumkasports.org";
-  const scoutPassword = process.env.INITIAL_SCOUT_PASSWORD || "ScoutSecurePass123!";
+  const scoutPassword = process.env.INITIAL_SCOUT_PASSWORD || "scout@sport123";
 
   try {
     await connectToDatabase();
