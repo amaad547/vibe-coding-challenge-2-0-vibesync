@@ -2,15 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { LogIn, AlertCircle, Clock, ShieldX, ShieldCheck, Users, Key } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LogIn, AlertCircle, Clock, ShieldX, UserPlus, Mail, Lock } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -19,29 +17,6 @@ function LoginForm() {
     type: "ERROR" | "PENDING" | "REJECTED";
     message: string;
   } | null>(null);
-
-  // Check URL parameters for role preset (e.g. ?role=coach or ?role=scout)
-  React.useEffect(() => {
-    const roleParam = searchParams.get("role");
-    if (roleParam === "scout") {
-      setEmail("scout@dumkasports.org");
-      setPassword("ScoutSecurePass123!");
-    } else if (roleParam === "coach") {
-      setEmail("coach@dumkasports.org");
-      setPassword("CoachSecurePass123!");
-    }
-  }, [searchParams]);
-
-  const handleQuickFill = (role: "COACH" | "SCOUT") => {
-    setErrorStatus(null);
-    if (role === "COACH") {
-      setEmail("coach@dumkasports.org");
-      setPassword("CoachSecurePass123!");
-    } else {
-      setEmail("scout@dumkasports.org");
-      setPassword("ScoutSecurePass123!");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +27,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
 
       const data = await res.json();
@@ -63,18 +38,19 @@ function LoginForm() {
           setErrorStatus({
             type: "PENDING",
             message:
-              "Your player account registration is awaiting coach verification. Please check back later.",
+              "Your athlete registration is currently in the verification queue. The head coach will review and approve your account shortly.",
           });
         } else if (code === "ACCOUNT_REJECTED") {
           setErrorStatus({
             type: "REJECTED",
             message:
-              "Your registration was not approved by the academy. Please contact the head coach.",
+              "Your registration application was not approved by the academy. Please contact the head coach.",
           });
         } else {
           setErrorStatus({
             type: "ERROR",
-            message: data.error?.message || "Invalid credentials. Please try again.",
+            message:
+              data.error?.message || "Invalid email or password. Please verify your credentials.",
           });
         }
         setIsLoading(false);
@@ -95,56 +71,39 @@ function LoginForm() {
     } catch {
       setErrorStatus({
         type: "ERROR",
-        message: "Network or server connection failed. Please retry.",
+        message: "Unable to connect to the server. Please check your connection and retry.",
       });
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md w-full mx-auto my-6 space-y-4">
-      {/* Quick Role Fill Pills */}
-      <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-2xs">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
-          <Key className="w-3.5 h-3.5 text-brand-primary" /> Quick Demo Fill
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickFill("COACH")}
-            className="flex items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50/70 py-2 text-xs font-bold text-brand-primary hover:bg-blue-100 transition-colors cursor-pointer"
-          >
-            <Users className="w-3.5 h-3.5" />
-            Coach Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickFill("SCOUT")}
-            className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50/70 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            Scout Sign In
-          </button>
-        </div>
-      </div>
+    <div className="relative max-w-md w-full mx-auto my-6">
+      {/* Ambient Glow behind the Login Card */}
+      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-blue-500/10 blur-xl opacity-75 pointer-events-none" />
 
       {/* Main Login Card */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-8 shadow-sm">
+      <div className="relative rounded-2xl border border-slate-200/90 bg-white/95 p-8 shadow-xl backdrop-blur-sm">
         <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 text-brand-primary mb-3 shadow-inner">
+            <LogIn className="w-6 h-6" />
+          </div>
           <h1 className="text-2xl font-black tracking-tight text-brand-navy">
             Sign In to SportSync
           </h1>
-          <p className="text-xs text-slate-500 mt-1">Dumka Sports Academy Management Desk</p>
+          <p className="text-xs text-slate-500 mt-1">
+            Access your coach desk, player portal, or scouting registry
+          </p>
         </div>
 
         {errorStatus && (
           <div
-            className={`mb-6 rounded-lg p-4 flex items-start gap-3 text-xs leading-relaxed ${
+            className={`mb-6 rounded-xl p-4 flex items-start gap-3 text-xs leading-relaxed transition-all ${
               errorStatus.type === "PENDING"
-                ? "bg-amber-50 border border-amber-200 text-amber-800"
+                ? "bg-amber-50/90 border border-amber-200 text-amber-800"
                 : errorStatus.type === "REJECTED"
-                  ? "bg-rose-50 border border-rose-200 text-rose-800"
-                  : "bg-red-50 border border-red-200 text-red-800"
+                  ? "bg-rose-50/90 border border-rose-200 text-rose-800"
+                  : "bg-red-50/90 border border-red-200 text-red-800"
             }`}
           >
             {errorStatus.type === "PENDING" ? (
@@ -168,32 +127,52 @@ function LoginForm() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="Email Address"
-            type="email"
-            required
-            placeholder="coach@dumkasports.org"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isLoading}
-          />
+          <div className="space-y-1.5 text-left">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Email Address
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <Mail className="h-4 w-4" />
+              </div>
+              <input
+                type="email"
+                required
+                placeholder="name@dumkasports.org"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                className="flex h-11 w-full rounded-xl border border-slate-300 bg-white/90 pl-10 pr-3 py-2 text-sm text-brand-navy shadow-2xs transition-all placeholder:text-slate-400 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-3 focus:ring-brand-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+          </div>
 
-          <Input
-            label="Password"
-            type="password"
-            required
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
-          />
+          <div className="space-y-1.5 text-left">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Password
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <Lock className="h-4 w-4" />
+              </div>
+              <input
+                type="password"
+                required
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                className="flex h-11 w-full rounded-xl border border-slate-300 bg-white/90 pl-10 pr-3 py-2 text-sm text-brand-navy shadow-2xs transition-all placeholder:text-slate-400 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-3 focus:ring-brand-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+          </div>
 
           <div className="pt-2">
             <Button
               type="submit"
               variant="primary"
-              size="md"
-              className="w-full font-bold"
+              size="lg"
+              className="w-full font-bold shadow-md shadow-blue-500/20 hover:shadow-blue-500/30 transition-all rounded-xl"
               isLoading={isLoading}
               leftIcon={<LogIn className="h-4 w-4" />}
             >
@@ -202,24 +181,28 @@ function LoginForm() {
           </div>
         </form>
 
-        {/* Credentials Reference Helper */}
-        <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2">
-          <p className="font-bold text-slate-600">Default Academy Accounts:</p>
-          <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <div>
-              <span className="font-semibold text-brand-navy block">Coach:</span>
-              <span className="text-slate-600">coach@dumkasports.org</span>
-              <span className="text-slate-400 block font-mono">CoachSecurePass123!</span>
+        {/* Enhanced Player Registration Callout */}
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center space-y-3">
+          <p className="text-xs text-slate-500">New athlete applying to the academy?</p>
+          <Link
+            href="/register"
+            className="group flex items-center justify-between w-full rounded-xl border border-blue-200/90 bg-blue-50/70 p-3.5 text-xs font-bold text-brand-primary hover:bg-blue-100/80 hover:border-blue-300 transition-all duration-200 shadow-2xs"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-white text-brand-primary flex items-center justify-center shadow-2xs">
+                <UserPlus className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-brand-navy">New Player / Register</p>
+                <p className="text-[11px] font-normal text-slate-500">
+                  Submit your athlete profile for coach review
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="font-semibold text-emerald-700 block">Scout:</span>
-              <span className="text-slate-600">scout@dumkasports.org</span>
-              <span className="text-slate-400 block font-mono">ScoutSecurePass123!</span>
-            </div>
-          </div>
-          <p className="text-[10px] text-slate-400 text-center">
-            Athletes sign in with their registered email and password.
-          </p>
+            <span className="text-xs font-black text-brand-primary group-hover:translate-x-0.5 transition-transform">
+              Apply &rarr;
+            </span>
+          </Link>
         </div>
       </div>
     </div>
@@ -228,29 +211,38 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-brand-surface p-4 sm:p-8">
-      {/* Top Header */}
-      <div className="flex justify-between items-center max-w-5xl mx-auto w-full">
-        <SportSyncLogo size="md" href="/" />
-        <Link href="/register" className="text-xs font-semibold text-brand-primary hover:underline">
-          New Player? Register
-        </Link>
-      </div>
+    <div className="relative min-h-screen flex flex-col justify-between bg-slate-50 p-4 sm:p-8 overflow-hidden">
+      {/* Ambient background decoration */}
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <React.Suspense
-        fallback={
-          <div className="max-w-md w-full mx-auto my-8 p-8 text-center text-xs text-slate-400">
-            Loading sign in...
-          </div>
-        }
-      >
-        <LoginForm />
-      </React.Suspense>
+      {/* Top Header */}
+      <header className="flex justify-between items-center max-w-5xl mx-auto w-full z-10">
+        <SportSyncLogo size="md" href="/" />
+        <Link
+          href="/register"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-brand-primary shadow-2xs hover:bg-blue-50 transition-colors"
+        >
+          <UserPlus className="w-3.5 h-3.5" />
+          <span>New Player Registration</span>
+        </Link>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex items-center justify-center py-6 z-10">
+        <React.Suspense
+          fallback={
+            <div className="max-w-md w-full mx-auto my-8 p-8 text-center text-xs text-slate-400">
+              Loading sign in...
+            </div>
+          }
+        >
+          <LoginForm />
+        </React.Suspense>
+      </main>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-slate-400 py-4">
-        &copy; {new Date().getFullYear()} SportSync &bull; Your Academy. Your Performance. Your
-        Future.
+      <footer className="text-center text-xs text-slate-400 py-4 z-10">
+        &copy; {new Date().getFullYear()} SportSync &bull; Dumka Sports Academy Management Desk
       </footer>
     </div>
   );
