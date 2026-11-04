@@ -90,6 +90,11 @@ see only their own record.
 - `npm run format`: Format source files with Prettier
 - `npm run test:db`: Run the MongoDB connection utility verification script
 - `npm run test:auth`: Run the Phase 2 Authentication and Role-Based Access Control test suite
+- `npm run test:players`: Run the Phase 3 Player Management test suite
+- `npm run test:attendance`: Run the Phase 4 Attendance Management test suite (AT-01 scenario)
+- `npm run test:matches`: Run the Phase 5 Match & Score Management test suite
+- `npm run test:readiness`: Run the Phase 6 Player Readiness Engine test suite
+- `npm run test:dashboards`: Run the Phase 7 Role-Based Dashboards & RBAC test suite
 - `npm run seed`: Provision or update initial Coach and Scout accounts securely
 
 ## Phase 1 — Project Foundation Architecture
@@ -176,6 +181,134 @@ src/
 - **Registration Approval Queue**:
   - Tabbed interface on `/coach/players` allowing coaches to review incoming athlete applications, approve them to grant immediate login access, or reject them with documented reasons.
 - **UI States**: Real-time loading overlays, empty states for filtered queries, error handling with retry, and confirmation modals.
+
+## Phase 4 — Attendance Management & Session Lifecycle
+
+### Core Invariants & Calculations
+
+- **Session Opening & Snapshotting**:
+  - Coach creates a practice session with a normalized calendar date (`YYYY-MM-DD`) and sport.
+  - Active, verified players belonging to that sport at session creation time are automatically snapshotted into `Session.roster` with initial status `null`.
+  - Enforces unique session per `(sport, date)` composite constraint.
+- **Attendance Marking**:
+  - Coach can mark each snapshotted player as `PRESENT` or `ABSENT`.
+  - Players outside the sport or registered after session opening are never snapshotted.
+  - Batch updates via `PUT /api/sessions/:id/attendance` validate all player IDs and statuses on the server.
+- **Atomic Locking & Immutability**:
+  - Closing a session (`POST /api/sessions/:id/close`) requires all snapshotted players to have an assigned status (`PRESENT` or `ABSENT`).
+  - Upon closing, the session status transitions atomically to `CLOSED` and `closedAt` timestamp is set.
+  - Once closed, attendance records are locked and cannot be edited, reopened, or deleted via UI or API (subsequent modification attempts return HTTP 409 `CONFLICT`).
+- **Attendance Aggregation Algorithm (`calculatePlayerAttendance`)**:
+  - **Denominator**: Total number of **CLOSED** sessions matching the player's sport where session `date >= player.createdAt`.
+  - **Numerator**: Total number of those closed sessions where the player was recorded as `PRESENT`.
+  - Sessions from other sports, open sessions, and sessions prior to the player's enrollment date never count towards the denominator or numerator.
+
+### Session Endpoints
+
+- `GET /api/sessions`: List sessions with optional filters (`sport`, `status`) and summary attendance counts.
+- `POST /api/sessions`: Open a new practice session and snapshot eligible athletes.
+- `GET /api/sessions/:id`: Retrieve session details with full roster and attendance counts.
+- `PUT /api/sessions/:id/attendance`: Mark athletes `PRESENT` or `ABSENT` in an open session.
+- `POST /api/sessions/:id/close`: Verify all athletes are marked and atomically close/lock the session.
+
+## Phase 5 — Match & Score Management
+
+### Core Invariants & Rules
+
+- **Linked Practice Session Constraint**:
+  - Matches must be linked to an existing practice session (`sessionId`).
+  - The linked session must have status `CLOSED` (matches cannot be linked to open sessions).
+  - Match calendar date must strictly match the linked session date (`DATE_MISMATCH` rejection).
+  - Match sport must strictly match the linked session sport (`SPORT_MISMATCH` rejection).
+- **Athlete Eligibility Enforcement**:
+  - Only athletes snapshotted into the linked session and marked `PRESENT` are eligible to participate.
+  - If a client manually passes an `ABSENT` or foreign player ID, the server strictly rejects the request with HTTP 409 `PLAYER_NOT_ELIGIBLE`.
+  - At least one eligible participant is required. Duplicate athlete IDs in the match sheet are rejected.
+- **Server-Derived Score Metrics & Units (Tamper Resistance)**:
+  - Scoring metrics and units are derived strictly on the server from `SportConfig` (or canonical defaults):
+    - **Football**: Metric: `Goals`, Unit: `Goals`
+    - **Cricket**: Metric: `Runs`, Unit: `Runs`
+    - **Basketball**: Metric: `Points`, Unit: `Points`
+    - **Athletics**: Metric: `Points`, Unit: `Points`
+    - **Badminton**: Metric: `Points`, Unit: `Points`
+  - Client-supplied metric or unit values are never trusted or accepted.
+- **Score Validation**:
+  - Scores must be non-negative, finite numbers.
+  - A score of `0` is valid and accepted. Negative or non-numeric scores are rejected.
+- **Finalized Status**:
+  - Match records are created in `FINALIZED` status as immutable official fixtures.
+
+### Match Endpoints
+
+- `GET /api/matches`: List matches with optional filters (`sport`, `date`, `playerId`, pagination).
+- `POST /api/matches`: Finalize match sheet with linked session validation, eligibility verification, and server score derivation.
+- `GET /api/matches/:id`: Retrieve detailed match sheet with participant athlete performances.
+- `GET /api/sports`: Retrieve server-configured sports, active statuses, and scoring metrics/units.
+
+## Phase 6 — Player Readiness Engine
+
+### Core Invariants & Calculation Rules
+
+- **Attendance Calculation**:
+  - `attendance percentage = (present closed sessions / all eligible closed sessions) * 100`
+  - Eligible closed sessions are filtered strictly to the player's sport where session `date >= player.createdAt`.
+  - Open practice sessions are completely excluded from the denominator.
+  - Sessions from other sports or dated prior to the player's enrollment date never count.
+  - If no eligible closed sessions exist (`heldSessions === 0`), attendance is `0.0%` and the athlete is Not Ready.
+- **Trial Readiness Rule**:
+  - An athlete is **`READY`** if and only if:
+    1. **Attendance Rate &ge; 0.75 (75.0%)**: evaluated using the **exact unrounded ratio** (`present / held >= 0.75`).
+    2. **Finalized Matches &ge; 2**: participated in at least two finalized match fixtures.
+  - Both criteria must be satisfied simultaneously.
+- **Dynamic Recalculation (No Static Stored Status)**:
+  - Readiness is dynamically derived by the server-side service (`evaluateReadiness` / `calculatePlayerReadiness` / `getAcademyReadiness`).
+  - Never stored as a static, authoritative, manually editable database flag, guaranteeing tamper-proof auditability.
+- **Boundary Test Coverage**:
+  - Below 75% attendance (e.g. 74.999% ratio with 2 matches) &rarr; `NOT READY`.
+  - Exactly 75% attendance (3/4 ratio with 2 matches) &rarr; `READY`.
+  - Above 75% attendance (e.g. 75.001% or 80.0% ratio with 2 matches) &rarr; `READY`.
+  - Fewer than two matches (0 matches or 1 match with 100% attendance) &rarr; `NOT READY`.
+  - Exactly two matches (2 matches with &ge; 75% attendance) &rarr; `READY`.
+
+### Readiness Endpoints & UI
+
+- `GET /api/readiness`: Coach endpoint returning all verified athletes with attendance numerators/denominators, percentages, matches played, and `isReady` flags.
+- `/coach/readiness`: Coach dashboard interface displaying real-time athlete readiness ledger, criteria progress bars, filters (All, Ready, Not Ready, Sport), and search.
+
+## Phase 7 — Role-Based Dashboards & Privacy Scoping
+
+### Dashboard Architectural Separation
+
+1. **Coach Dashboard (`/coach`)**:
+   - `GET /api/coach/overview`: Aggregated player stats (active, pending, archived, verified, ready for scouts), session stats, match stats, and recent activity.
+   - Registration Review Queue: Quick approval/rejection modal for pending applications.
+   - Quick navigation shortcuts to Add Player, Practice Sessions, Record Match, and Readiness Ledger.
+
+2. **Player Portal (`/player`)**:
+   - `GET /api/player/me`: Strictly scoped to the authenticated user's linked player record.
+   - Server resolves player ID from the secure session token; any client-supplied ID in query or body is ignored.
+   - Personal attendance metrics (held sessions, present sessions, percentage, progress bar).
+   - Real-time readiness evaluation with gap analysis and milestone tracking.
+   - Complete personal finalized match history with recorded scores and server-derived units.
+
+3. **Scout Talent Registry (`/scout`)**:
+   - `GET /api/scout/ready-players`: Privacy-preserving talent discovery.
+   - Strict Server-Side Ready Filter: Returns **only** athletes who satisfy `isReady === true`.
+   - Never exposes total academy enrollment or Not Ready athlete counts.
+   - Search and sport filters operate strictly within the Ready set.
+   - `GET /api/scout/ready-players/:id`: Re-evaluates readiness in real time. If the athlete is not ready or has fallen below 75% attendance, the server immediately rejects the request with HTTP 404 `PLAYER_NOT_READY`.
+   - Scouting Dossier Modal displaying verified trial readiness metrics and individual match performance scores.
+
+### End-to-End Role-Based Access Control (RBAC) Enforcements
+
+- **Coach Endpoints**: Accessible strictly by `COACH` role; `SCOUT` and `PLAYER` receive HTTP 403 `FORBIDDEN`.
+- **Player Endpoints**: Accessible strictly by `PLAYER` role; unauthorized roles receive HTTP 403 `FORBIDDEN`.
+- **Scout Endpoints**: Accessible strictly by `SCOUT` role; unauthorized roles receive HTTP 403 `FORBIDDEN`.
+- **Unauthenticated Requests**: Blocked across all protected routes with HTTP 401 `UNAUTHORIZED`.
+
+
+
+
 
 
 

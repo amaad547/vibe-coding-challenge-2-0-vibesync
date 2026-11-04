@@ -51,33 +51,10 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 15000,
     };
 
-    cached.promise = mongoose
-      .connect(uri, opts)
-      .catch(async (err: unknown) => {
-        const error = err as { code?: string; syscall?: string; message?: string };
-        // Fallback: If local ISP/Windows DNS blocks SRV lookups (ECONNREFUSED querySrv),
-        // fallback to direct replica set hosts for the sportsync cluster
-        if (
-          (error?.code === "ECONNREFUSED" && error?.syscall === "querySrv") ||
-          error?.message?.includes("querySrv")
-        ) {
-          console.warn("⚠️ DNS SRV query refused by local resolver. Attempting direct cluster nodes...");
-          const directUri = uri
-            .replace("mongodb+srv://", "mongodb://")
-            .replace(
-              "sportsync.ak8wuns.mongodb.net",
-              "ac-lfglgia-shard-00-00.ak8wuns.mongodb.net:27017,ac-lfglgia-shard-00-01.ak8wuns.mongodb.net:27017,ac-lfglgia-shard-00-02.ak8wuns.mongodb.net:27017"
-            );
-          const separator = directUri.includes("?") ? "&" : "?";
-          const finalUri = `${directUri}${separator}ssl=true&replicaSet=atlas-75nyve-shard-0&authSource=admin`;
-          return mongoose.connect(finalUri, opts);
-        }
-        throw err;
-      })
-      .then((mongooseInstance) => mongooseInstance);
+    cached.promise = mongoose.connect(uri, opts);
   }
 
   try {

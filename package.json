@@ -12,7 +12,11 @@
     "test:db": "tsx scripts/test-db-connection.ts",
     "seed": "tsx scripts/seed-users.ts",
     "test:auth": "tsx scripts/test-auth-scenarios.ts",
-    "test:players": "tsx scripts/test-player-management.ts"
+    "test:players": "tsx scripts/test-player-management.ts",
+    "test:attendance": "tsx scripts/test-attendance.ts",
+    "test:matches": "tsx scripts/test-matches.ts",
+    "test:readiness": "tsx scripts/test-readiness.ts",
+    "test:dashboards": "tsx scripts/test-dashboards.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

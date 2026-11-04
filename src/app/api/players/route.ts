@@ -194,4 +194,3 @@ export async function POST(request: NextRequest) {
     return ApiErrors.internal("Failed to create player.");
   }
 }
-

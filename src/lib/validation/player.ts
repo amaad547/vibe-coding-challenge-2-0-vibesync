@@ -67,4 +67,3 @@ export const queryPlayersSchema = z.object({
 });
 
 export type QueryPlayersInput = z.infer<typeof queryPlayersSchema>;
-
