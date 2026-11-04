@@ -330,12 +330,12 @@ export default function ScoutRegistryPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
-                          variant="outline"
+                          variant="primary"
                           size="sm"
                           onClick={() => handleOpenDossier(p.id)}
                           leftIcon={<Eye className="w-3.5 h-3.5" />}
                         >
-                          Scout Dossier
+                          View Dossier
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -458,6 +458,18 @@ export default function ScoutRegistryPage() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Coach Contact Box for Scouts */}
+              <div className="p-3 rounded-lg border border-emerald-200 bg-emerald-50/70 text-emerald-950 text-xs">
+                <p className="font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  Trial Invitation & Scouting Inquiry:
+                </p>
+                <p className="mt-0.5 text-slate-700">
+                  To invite this athlete for trials or request verified documents, contact the Dumka
+                  Head Coach at <strong className="text-brand-navy">coach@dumkasports.org</strong>.
+                </p>
               </div>
 
               <div className="flex justify-end pt-2 border-t border-slate-100">

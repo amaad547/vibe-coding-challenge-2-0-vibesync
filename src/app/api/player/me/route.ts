@@ -3,7 +3,9 @@ import { connectToDatabase } from "@/lib/db/mongodb";
 import { requireRole } from "@/lib/auth/session";
 import { Player } from "@/models/Player";
 import { Match } from "@/models/Match";
+import { Session } from "@/models/Session";
 import { calculatePlayerReadiness } from "@/lib/services/readiness";
+import { normalizeCalendarDate } from "@/lib/utils/date";
 import { AppError } from "@/lib/errors/api-error";
 
 export async function GET() {
@@ -33,6 +35,25 @@ export async function GET() {
 
     // Dynamic readiness evaluation (also computes attendance)
     const readiness = await calculatePlayerReadiness(session.playerId);
+
+    // Fetch practice session track record
+    const practiceSessions = await Session.find({
+      sport: player.sport.toLowerCase(),
+      status: "CLOSED",
+      date: { $gte: normalizeCalendarDate(player.createdAt) },
+    })
+      .sort({ date: -1 })
+      .lean();
+
+    const sessionHistory = practiceSessions.map((s) => {
+      const entry = s.roster.find((r) => r.playerId.toString() === session.playerId);
+      return {
+        id: s._id.toString(),
+        date: s.date,
+        sport: s.sport,
+        status: entry ? entry.status : "UNMARKED",
+      };
+    });
 
     // Player match history
     const matches = await Match.find({
@@ -83,6 +104,7 @@ export async function GET() {
           matchesPlayed: readiness.matchesPlayed,
           reason: readiness.readinessReason,
         },
+        sessions: sessionHistory,
         matches: formattedMatches,
       },
     });

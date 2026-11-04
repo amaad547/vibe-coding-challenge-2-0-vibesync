@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -36,6 +36,17 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Ignore network errors and push to login
+    }
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <>
@@ -106,20 +117,20 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           })}
         </nav>
 
-        {/* Footer info & sign out */}
-        <div className="border-t border-slate-200 p-4">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <div>
-              <p className="font-semibold text-brand-navy">Demo Mode</p>
-              <p className="text-[10px]">SportSync v0.1.0</p>
-            </div>
-            <Link
-              href="/login"
-              className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
-              title="Sign Out"
-            >
-              <LogOut className="h-4 w-4" />
-            </Link>
+        {/* Dedicated Sign Out Footer Button */}
+        <div className="border-t border-slate-200 p-4 space-y-3">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-100/80 hover:text-rose-700 transition-colors shadow-2xs cursor-pointer"
+          >
+            <LogOut className="h-4 w-4 text-rose-500" />
+            <span>Sign Out</span>
+          </button>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+            <span>Dumka Academy Desk</span>
+            <span>v1.0.0</span>
           </div>
         </div>
       </aside>
