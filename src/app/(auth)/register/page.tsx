@@ -11,9 +11,11 @@ import {
   Mail,
   Lock,
   Calendar,
+  Sparkles,
 } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { getSkillsForSport, formatSkillLabel } from "@/lib/constants/skills";
 
 const SPORTS = [
   { id: "football", label: "Football", emoji: "⚽" },
@@ -28,9 +30,20 @@ export default function RegisterPage() {
   const [password, setPassword] = React.useState("");
   const [age, setAge] = React.useState("");
   const [sport, setSport] = React.useState("football");
+  const [skill, setSkill] = React.useState("forward");
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+
+  const availableSkills = React.useMemo(() => getSkillsForSport(sport), [sport]);
+
+  const handleSportChange = (newSport: string) => {
+    setSport(newSport);
+    const skills = getSkillsForSport(newSport);
+    if (skills && skills.length > 0 && skills[0]) {
+      setSkill(skills[0].id);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +60,7 @@ export default function RegisterPage() {
           password,
           age: parseInt(age, 10),
           sport,
+          skill,
         }),
       });
 
@@ -120,14 +134,18 @@ export default function RegisterPage() {
                     <span className="font-bold capitalize">{sport}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-slate-500">Primary Skill:</span>
+                    <span className="font-bold text-indigo-700">{formatSkillLabel(skill)}</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-slate-500">Review Status:</span>
                     <span className="font-bold text-amber-700">Awaiting Head Coach Approval</span>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  The head coach will review your enrollment shortly. Once verified, you can sign in
-                  to access your performance ledger.
+                  The head coach will review your enrollment and skill profile shortly. Once
+                  verified, you can sign in to access your performance ledger.
                 </p>
 
                 <div className="pt-2">
@@ -259,7 +277,7 @@ export default function RegisterPage() {
                       </label>
                       <select
                         value={sport}
-                        onChange={(e) => setSport(e.target.value)}
+                        onChange={(e) => handleSportChange(e.target.value)}
                         disabled={isLoading}
                         className="flex h-11 w-full rounded-xl border border-slate-300 bg-white/90 px-3 py-2 text-sm text-brand-navy shadow-2xs transition-all focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-3 focus:ring-brand-primary/20 font-medium"
                       >
@@ -277,7 +295,7 @@ export default function RegisterPage() {
                       <button
                         key={s.id}
                         type="button"
-                        onClick={() => setSport(s.id)}
+                        onClick={() => handleSportChange(s.id)}
                         className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all cursor-pointer flex items-center justify-center gap-1 ${
                           sport === s.id
                             ? "bg-indigo-50 border-indigo-300 text-indigo-700 shadow-2xs"
@@ -288,6 +306,32 @@ export default function RegisterPage() {
                         <span className="truncate">{s.label}</span>
                       </button>
                     ))}
+                  </div>
+
+                  {/* Skill / Role Selector */}
+                  <div className="space-y-1.5 text-left pt-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Specialization / Skill</span>
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {availableSkills.map((sk) => (
+                        <button
+                          key={sk.id}
+                          type="button"
+                          onClick={() => setSkill(sk.id)}
+                          className={`p-2.5 rounded-xl text-left border text-xs font-bold transition-all cursor-pointer flex items-center justify-between ${
+                            skill === sk.id
+                              ? "bg-brand-primary text-white border-brand-primary shadow-sm"
+                              : "bg-slate-50/80 border-slate-200 text-slate-700 hover:bg-slate-100"
+                          }`}
+                        >
+                          <span className="truncate">{sk.label}</span>
+                          {skill === sk.id && <span className="text-white text-xs">✓</span>}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="pt-2">

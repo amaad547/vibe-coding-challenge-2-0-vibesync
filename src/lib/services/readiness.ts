@@ -10,6 +10,7 @@ export interface PlayerReadinessResult {
   playerName: string;
   age: number;
   sport: string;
+  skill?: string;
   registrationStatus: "PENDING" | "VERIFIED" | "REJECTED";
   isActive: boolean;
   heldSessions: number;
@@ -132,6 +133,7 @@ async function calculateSinglePlayerReadiness(player: IPlayer): Promise<PlayerRe
     playerName: player.name,
     age: player.age,
     sport: player.sport,
+    skill: player.skill || "All-Rounder",
     registrationStatus: player.registrationStatus,
     isActive: player.isActive,
     heldSessions,

@@ -32,12 +32,14 @@ import {
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
+import { getSkillsForSport, formatSkillLabel } from "@/lib/constants/skills";
 
 interface PlayerItem {
   id: string;
   name: string;
   age: number;
   sport: string;
+  skill?: string;
   isActive: boolean;
   registrationStatus: "PENDING" | "VERIFIED" | "REJECTED";
   email: string | null;
@@ -96,6 +98,7 @@ export default function CoachPlayerManagementPage() {
   const [addName, setAddName] = React.useState("");
   const [addAge, setAddAge] = React.useState("");
   const [addSport, setAddSport] = React.useState("football");
+  const [addSkill, setAddSkill] = React.useState("forward");
   const [addEmail, setAddEmail] = React.useState("");
   const [addPassword, setAddPassword] = React.useState("");
   const [formError, setFormError] = React.useState<string | null>(null);
@@ -104,6 +107,7 @@ export default function CoachPlayerManagementPage() {
   const [editName, setEditName] = React.useState("");
   const [editAge, setEditAge] = React.useState("");
   const [editSport, setEditSport] = React.useState("");
+  const [editSkill, setEditSkill] = React.useState("");
   const [editIsActive, setEditIsActive] = React.useState(true);
 
   // Fetch Directory Players
@@ -168,6 +172,7 @@ export default function CoachPlayerManagementPage() {
           name: addName,
           age: parseInt(addAge, 10),
           sport: addSport,
+          skill: addSkill,
           email: addEmail || undefined,
           temporaryPassword: addPassword || undefined,
         }),
@@ -199,6 +204,7 @@ export default function CoachPlayerManagementPage() {
     setEditName(p.name);
     setEditAge(p.age.toString());
     setEditSport(p.sport);
+    setEditSkill(p.skill || "all_rounder");
     setEditIsActive(p.isActive);
   };
 
@@ -216,6 +222,7 @@ export default function CoachPlayerManagementPage() {
           name: editName,
           age: parseInt(editAge, 10),
           sport: editSport,
+          skill: editSkill,
           isActive: editIsActive,
         }),
       });
@@ -445,6 +452,9 @@ export default function CoachPlayerManagementPage() {
                           <TableCell>{player.age} yrs</TableCell>
                           <TableCell>
                             <Badge variant="neutral">{player.sport.toUpperCase()}</Badge>
+                            <div className="text-[11px] font-semibold text-indigo-700 mt-0.5">
+                              {formatSkillLabel(player.skill)}
+                            </div>
                           </TableCell>
                           <TableCell>
                             {player.isActive ? (
@@ -560,6 +570,9 @@ export default function CoachPlayerManagementPage() {
                         <TableCell>{item.age} yrs</TableCell>
                         <TableCell>
                           <Badge variant="neutral">{item.sport.toUpperCase()}</Badge>
+                          <div className="text-[11px] font-semibold text-indigo-700 mt-0.5">
+                            {formatSkillLabel(item.skill)}
+                          </div>
                         </TableCell>
                         <TableCell className="text-xs text-slate-500">
                           {new Date(item.createdAt).toLocaleDateString()}
@@ -655,7 +668,12 @@ export default function CoachPlayerManagementPage() {
               </label>
               <select
                 value={addSport}
-                onChange={(e) => setAddSport(e.target.value)}
+                onChange={(e) => {
+                  const newSport = e.target.value;
+                  setAddSport(newSport);
+                  const skills = getSkillsForSport(newSport);
+                  if (skills && skills.length > 0 && skills[0]) setAddSkill(skills[0].id);
+                }}
                 className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
               >
                 <option value="football">Football</option>
@@ -664,6 +682,23 @@ export default function CoachPlayerManagementPage() {
                 <option value="badminton">Badminton</option>
               </select>
             </div>
+          </div>
+
+          <div className="space-y-1.5 text-left">
+            <label className="block text-xs font-semibold tracking-wide text-brand-navy">
+              Position / Skill Specialization
+            </label>
+            <select
+              value={addSkill}
+              onChange={(e) => setAddSkill(e.target.value)}
+              className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+            >
+              {getSkillsForSport(addSport).map((sk) => (
+                <option key={sk.id} value={sk.id}>
+                  {sk.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="pt-2 border-t border-slate-100">
@@ -745,7 +780,12 @@ export default function CoachPlayerManagementPage() {
                 </label>
                 <select
                   value={editSport}
-                  onChange={(e) => setEditSport(e.target.value)}
+                  onChange={(e) => {
+                    const newSport = e.target.value;
+                    setEditSport(newSport);
+                    const skills = getSkillsForSport(newSport);
+                    if (skills && skills.length > 0 && skills[0]) setEditSkill(skills[0].id);
+                  }}
                   className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 >
                   <option value="football">Football</option>
@@ -754,6 +794,23 @@ export default function CoachPlayerManagementPage() {
                   <option value="badminton">Badminton</option>
                 </select>
               </div>
+            </div>
+
+            <div className="space-y-1.5 text-left">
+              <label className="block text-xs font-semibold tracking-wide text-brand-navy">
+                Position / Skill Specialization
+              </label>
+              <select
+                value={editSkill}
+                onChange={(e) => setEditSkill(e.target.value)}
+                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+              >
+                {getSkillsForSport(editSport).map((sk) => (
+                  <option key={sk.id} value={sk.id}>
+                    {sk.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="pt-2 flex items-center gap-2">

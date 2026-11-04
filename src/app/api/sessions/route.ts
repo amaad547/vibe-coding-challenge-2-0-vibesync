@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
     const roster = activeSportPlayers.map((player) => ({
       playerId: player._id,
       playerNameSnapshot: player.name,
+      playerSkillSnapshot: player.skill || "All-Rounder",
       status: null,
     }));
 

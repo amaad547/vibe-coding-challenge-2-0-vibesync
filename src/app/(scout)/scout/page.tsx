@@ -29,12 +29,14 @@ import {
   TableEmpty,
 } from "@/components/ui/table";
 import { formatCalendarDate } from "@/lib/utils/date";
+import { formatSkillLabel } from "@/lib/constants/skills";
 
 interface ReadyAthleteSummary {
   id: string;
   name: string;
   age: number;
   sport: string;
+  skill?: string;
   attendancePercentage: number;
   heldSessions: number;
   presentSessions: number;
@@ -48,6 +50,7 @@ interface ScoutingDossier {
     name: string;
     age: number;
     sport: string;
+    skill?: string;
     enrolledAt: string;
   };
   readinessEvidence: {
@@ -66,6 +69,8 @@ interface ScoutingDossier {
     score: number;
     scoreMetric: string;
     scoreUnit: string;
+    playerRoleSnapshot?: string;
+    formattedSummary?: string;
   }>;
 }
 
@@ -340,7 +345,12 @@ export default function ScoutRegistryPage() {
                           </div>
                           <div>
                             <div className="font-bold text-brand-navy text-xs">{p.name}</div>
-                            <div className="text-[11px] text-slate-400">{p.age} years old</div>
+                            <div className="text-[11px] text-slate-400">
+                              {p.age} years old &bull;{" "}
+                              <span className="font-semibold text-emerald-700">
+                                {formatSkillLabel(p.skill)}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -441,7 +451,7 @@ export default function ScoutRegistryPage() {
           }
           description={
             dossier
-              ? `${dossier.player.age} yrs • Sport: ${dossier.player.sport.toUpperCase()} • Verified Trial Candidate`
+              ? `${dossier.player.age} yrs • Sport: ${dossier.player.sport.toUpperCase()} • Specialization: ${formatSkillLabel(dossier.player.skill).toUpperCase()} • Verified Candidate`
               : ""
           }
         >
@@ -511,8 +521,13 @@ export default function ScoutRegistryPage() {
                         </div>
                         <div className="text-right">
                           <span className="font-black text-brand-primary text-sm px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200">
-                            {m.score} {m.scoreUnit}
+                            {m.formattedSummary || `${m.score} ${m.scoreUnit}`}
                           </span>
+                          {m.playerRoleSnapshot && (
+                            <span className="text-[10px] text-slate-400 block mt-0.5">
+                              {formatSkillLabel(m.playerRoleSnapshot)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     ))}

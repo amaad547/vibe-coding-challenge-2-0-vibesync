@@ -32,6 +32,7 @@ import {
   TableEmpty,
 } from "@/components/ui/table";
 import { formatCalendarDate } from "@/lib/utils/date";
+import { formatSkillLabel } from "@/lib/constants/skills";
 
 interface PlayerPortalData {
   player: {
@@ -39,6 +40,7 @@ interface PlayerPortalData {
     name: string;
     age: number;
     sport: string;
+    skill?: string;
     isActive: boolean;
     registrationStatus: string;
     createdAt: string;
@@ -72,6 +74,9 @@ interface PlayerPortalData {
     myScore: number;
     scoreMetric: string;
     scoreUnit: string;
+    playerRoleSnapshot?: string;
+    stats?: Record<string, unknown>;
+    formattedSummary?: string;
     totalAthletes: number;
   }>;
 }
@@ -195,6 +200,9 @@ export default function PlayerPortalPage() {
                 </h1>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-blue-100/80 text-brand-primary border border-blue-200">
                   {player?.sport}
+                </span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700 border border-indigo-200">
+                  {formatSkillLabel(player?.skill)}
                 </span>
                 {ready?.isReady ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -793,9 +801,16 @@ export default function PlayerPortalPage() {
                         vs. {m.opponent}
                       </TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-brand-primary text-xs font-black">
-                          {m.myScore} {m.scoreUnit}
-                        </span>
+                        <div>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-brand-primary text-xs font-black">
+                            {m.formattedSummary || `${m.myScore} ${m.scoreUnit}`}
+                          </span>
+                          {m.playerRoleSnapshot && (
+                            <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">
+                              {formatSkillLabel(m.playerRoleSnapshot)}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right text-xs font-semibold text-slate-500">
                         {m.totalAthletes} Athletes

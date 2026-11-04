@@ -58,6 +58,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         score: p ? p.score : 0,
         scoreMetric: p ? p.scoreMetric : "Points",
         scoreUnit: p ? p.scoreUnit : "Points",
+        playerRoleSnapshot: p?.playerRoleSnapshot || player.skill || "Athlete",
+        stats: p?.stats || {},
+        formattedSummary: p?.formattedSummary || "",
       };
     });
 
@@ -68,6 +71,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           name: player.name,
           age: player.age,
           sport: player.sport,
+          skill: player.skill || "All-Rounder",
           enrolledAt: player.createdAt,
         },
         readinessEvidence: {

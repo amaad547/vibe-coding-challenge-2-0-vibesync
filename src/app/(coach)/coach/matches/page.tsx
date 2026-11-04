@@ -27,15 +27,20 @@ import {
   RefreshCw,
   Search,
   Lock,
+  Sparkles,
 } from "lucide-react";
 import { formatCalendarDate } from "@/lib/utils/date";
+import { formatSkillLabel, formatMatchPerformance, ParticipantStats } from "@/lib/constants/skills";
 
 interface MatchParticipant {
   playerId: string;
   playerNameSnapshot: string;
+  playerRoleSnapshot?: string;
   score: number;
   scoreMetric: string;
   scoreUnit: string;
+  stats?: ParticipantStats;
+  formattedSummary?: string;
 }
 
 interface MatchRecord {
@@ -64,6 +69,7 @@ interface ClosedSessionOption {
 interface SessionRosterEntry {
   playerId: string;
   playerNameSnapshot: string;
+  playerSkillSnapshot?: string;
   status: "PRESENT" | "ABSENT" | null;
 }
 
@@ -71,6 +77,24 @@ interface SportMeta {
   sport: string;
   scoreMetric: string;
   scoreUnit: string;
+}
+
+interface ParticipantFormEntry {
+  selected: boolean;
+  score: number;
+  role: string;
+  stats: {
+    runs: number;
+    wickets: number;
+    overs?: number;
+    goals: number;
+    assists: number;
+    points: number;
+    rebounds: number;
+    sets: number;
+    time?: string;
+    distance?: string;
+  };
 }
 
 export default function CoachMatchesPage() {
@@ -96,7 +120,7 @@ export default function CoachMatchesPage() {
   const [matchDate, setMatchDate] = React.useState("");
   const [matchSport, setMatchSport] = React.useState("");
   const [selectedParticipants, setSelectedParticipants] = React.useState<
-    Record<string, { selected: boolean; score: number }>
+    Record<string, ParticipantFormEntry>
   >({});
   const [isSubmittingMatch, setIsSubmittingMatch] = React.useState(false);
   const [recordError, setRecordError] = React.useState<string | null>(null);
@@ -190,11 +214,24 @@ export default function CoachMatchesPage() {
         const roster: SessionRosterEntry[] = json.data.session.roster;
         setSessionRoster(roster);
 
-        // Pre-select PRESENT players with default score 0
-        const initialSelection: Record<string, { selected: boolean; score: number }> = {};
+        // Pre-select PRESENT players with sport-specific default stats
+        const initialSelection: Record<string, ParticipantFormEntry> = {};
         for (const player of roster) {
           if (player.status === "PRESENT") {
-            initialSelection[player.playerId] = { selected: true, score: 0 };
+            initialSelection[player.playerId] = {
+              selected: true,
+              score: 0,
+              role: player.playerSkillSnapshot || "all_rounder",
+              stats: {
+                runs: 0,
+                wickets: 0,
+                goals: 0,
+                assists: 0,
+                points: 0,
+                rebounds: 0,
+                sets: 0,
+              },
+            };
           }
         }
         setSelectedParticipants(initialSelection);
@@ -209,7 +246,8 @@ export default function CoachMatchesPage() {
   // Toggle player selection
   const handleTogglePlayer = (playerId: string) => {
     setSelectedParticipants((prev) => {
-      const current = prev[playerId] || { selected: false, score: 0 };
+      const current = prev[playerId];
+      if (!current) return prev;
       return {
         ...prev,
         [playerId]: { ...current, selected: !current.selected },
@@ -217,14 +255,34 @@ export default function CoachMatchesPage() {
     });
   };
 
-  // Update participant score
-  const handleScoreChange = (playerId: string, scoreVal: string) => {
-    const num = Math.max(0, parseInt(scoreVal, 10) || 0);
+  // Update specific sport stat for player
+  const handleStatChange = (
+    playerId: string,
+    field: "runs" | "wickets" | "goals" | "assists" | "points" | "rebounds" | "sets" | "score",
+    valStr: string
+  ) => {
+    const val = Math.max(0, parseInt(valStr, 10) || 0);
     setSelectedParticipants((prev) => {
-      const current = prev[playerId] || { selected: true, score: 0 };
+      const current = prev[playerId];
+      if (!current) return prev;
+
+      const updatedStats = { ...current.stats, [field]: val };
+      let newScore = current.score;
+
+      // Automatically sync primary score with main metric
+      if (field === "runs") newScore = val;
+      else if (field === "goals") newScore = val;
+      else if (field === "points") newScore = val;
+      else if (field === "sets") newScore = val;
+      else if (field === "score") newScore = val;
+
       return {
         ...prev,
-        [playerId]: { ...current, score: num },
+        [playerId]: {
+          ...current,
+          score: newScore,
+          stats: updatedStats,
+        },
       };
     });
   };
@@ -244,10 +302,23 @@ export default function CoachMatchesPage() {
     // Filter only selected participants
     const participantsPayload = Object.entries(selectedParticipants)
       .filter(([_, data]) => data.selected)
-      .map(([playerId, data]) => ({
-        playerId,
-        score: data.score,
-      }));
+      .map(([playerId, data]) => {
+        let finalScore = data.score;
+        const normSport = matchSport.toLowerCase();
+        if (normSport === "cricket") {
+          finalScore = data.stats.runs ?? 0;
+        } else if (normSport === "football") {
+          finalScore = data.stats.goals ?? 0;
+        } else if (normSport === "basketball") {
+          finalScore = data.stats.points ?? 0;
+        }
+        return {
+          playerId,
+          playerRole: data.role,
+          score: finalScore,
+          stats: data.stats,
+        };
+      });
 
     if (participantsPayload.length === 0) {
       setRecordError("At least one eligible (PRESENT) athlete must participate in the match.");
@@ -297,7 +368,7 @@ export default function CoachMatchesPage() {
     setRecordError(null);
   };
 
-  // Filter matches by search query (opponent or sport)
+  // Filter matches by search query (opponent, sport, or player name)
   const filteredMatches = matches.filter((m) => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
@@ -323,8 +394,8 @@ export default function CoachMatchesPage() {
               Match & Score Management
             </h1>
             <p className="text-sm text-slate-500 mt-1">
-              Record finalized match sheets linked to closed practice sessions. Only eligible
-              Present athletes may participate.
+              Record finalized match scorecards linked to closed practice sessions with
+              sport-specific metrics (runs, wickets, goals, assists, and points).
             </p>
           </div>
 
@@ -394,7 +465,7 @@ export default function CoachMatchesPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-slate-500">With finalized match fixtures</p>
+              <p className="text-xs text-slate-500">With finalized match scorecards</p>
             </CardContent>
           </Card>
         </div>
@@ -433,10 +504,10 @@ export default function CoachMatchesPage() {
         {/* Matches Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Match History & Scores</CardTitle>
+            <CardTitle className="text-base">Match Scorecard History</CardTitle>
             <CardDescription>
-              Permanent match records contributing towards athlete trial readiness (minimum 2
-              matches required)
+              Official match records contributing towards athlete trial readiness (minimum 2 matches
+              required)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -453,7 +524,7 @@ export default function CoachMatchesPage() {
                   <TableHead>Date</TableHead>
                   <TableHead>Sport</TableHead>
                   <TableHead>Opponent</TableHead>
-                  <TableHead>Athletes</TableHead>
+                  <TableHead>Squad</TableHead>
                   <TableHead>Top Performance</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -514,12 +585,15 @@ export default function CoachMatchesPage() {
                         </TableCell>
                         <TableCell>
                           {topScorer ? (
-                            <span className="text-xs font-semibold text-slate-700">
-                              {topScorer.playerNameSnapshot}:{" "}
-                              <strong className="text-brand-primary">
-                                {topScorer.score} {topScorer.scoreUnit}
-                              </strong>
-                            </span>
+                            <div className="text-xs">
+                              <span className="font-bold text-slate-800">
+                                {topScorer.playerNameSnapshot}:
+                              </span>{" "}
+                              <span className="font-black text-brand-primary">
+                                {topScorer.formattedSummary ||
+                                  `${topScorer.score} ${topScorer.scoreUnit}`}
+                              </span>
+                            </div>
                           ) : (
                             "—"
                           )}
@@ -538,8 +612,9 @@ export default function CoachMatchesPage() {
                               setIsDetailModalOpen(true);
                             }}
                             leftIcon={<Eye className="w-4 h-4" />}
+                            className="font-bold text-xs"
                           >
-                            View Sheet
+                            Scorecard
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -551,120 +626,125 @@ export default function CoachMatchesPage() {
           </CardContent>
         </Card>
 
-        {/* RECORD MATCH MODAL */}
+        {/* MODAL: RECORD MATCH SHEET */}
         <Modal
           isOpen={isRecordModalOpen}
           onClose={() => setIsRecordModalOpen(false)}
-          title="Record Finalized Match"
-          description="Create an official match sheet linked to an existing closed practice session. Only players marked Present in that session can participate."
+          title="Record Official Match Sheet"
+          description="Link an official fixture to a closed practice session. Add runs for batsmen, wickets for bowlers, and sport-specific stats."
         >
           <form onSubmit={handleSubmitMatch} className="space-y-4 pt-2">
             {recordError && (
-              <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 flex items-center gap-2">
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>{recordError}</span>
               </div>
             )}
 
-            {/* 1. Select Closed Session */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Linked Practice Session <span className="text-rose-500">*</span>
+            {/* 1. Select Closed Practice Session */}
+            <div className="space-y-1.5 text-left">
+              <label className="block text-xs font-semibold tracking-wide text-brand-navy">
+                Link to Closed Practice Session
               </label>
               {closedSessions.length === 0 ? (
-                <div className="rounded-lg border border-amber-200 bg-amber-50/70 p-3 text-xs text-amber-800">
-                  <p className="font-semibold">No closed sessions available</p>
-                  <p className="mt-0.5">
-                    Matches require a closed and locked practice session on the same date and sport.
-                    Please close a practice session from the <strong>Sessions</strong> tab first.
-                  </p>
+                <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+                  No CLOSED practice sessions available. You must conduct and close a practice
+                  session before creating a match on the same date and sport.
                 </div>
               ) : (
                 <select
                   value={selectedSessionId}
                   onChange={(e) => handleSelectSession(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-brand-primary focus:outline-hidden focus:ring-1 focus:ring-brand-primary"
-                  required
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-brand-navy focus:border-brand-primary focus:outline-hidden focus:ring-1 focus:ring-brand-primary"
                 >
-                  <option value="">-- Choose a Closed Practice Session --</option>
-                  {closedSessions.map((session) => (
-                    <option key={session.id} value={session.id}>
-                      {formatCalendarDate(session.date)} &bull; {session.sport.toUpperCase()} &bull;
-                      ({session.presentCount} Present of {session.totalRoster})
+                  <option value="">-- Choose a closed session --</option>
+                  {closedSessions.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {formatCalendarDate(s.date)} &bull; {s.sport.toUpperCase()} &bull; (
+                      {s.presentCount} Present of {s.totalRoster})
                     </option>
                   ))}
                 </select>
               )}
             </div>
 
-            {/* Session Metadata Display (Derived) */}
+            {/* Session Auto-Derived Details */}
             {selectedSessionId && (
               <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
                 <div>
-                  <span className="text-slate-500 block">Match Date (Locked to Session):</span>
-                  <strong className="text-brand-navy font-semibold">{matchDate}</strong>
+                  <span className="text-slate-500 block">Match Date (Derived)</span>
+                  <strong className="text-brand-navy">{matchDate}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Sport & Scoring Metric:</span>
-                  <strong className="text-brand-navy font-semibold uppercase">
-                    {matchSport} ({activeSportMeta.scoreMetric})
-                  </strong>
+                  <span className="text-slate-500 block">Sport (Derived)</span>
+                  <strong className="text-brand-navy uppercase">{matchSport}</strong>
                 </div>
               </div>
             )}
 
             {/* 2. Opponent Name */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Opponent Team / Academy <span className="text-rose-500">*</span>
-              </label>
+            {selectedSessionId && (
               <Input
-                placeholder="e.g. Ranchi United FC, Tata Academy"
+                label="Opponent Team / Academy"
+                required
+                placeholder="e.g. Ranchi Warriors or Tata Football Academy"
                 value={opponent}
                 onChange={(e) => setOpponent(e.target.value)}
-                required
-                maxLength={80}
               />
-            </div>
+            )}
 
-            {/* 3. Athlete Selection & Individual Scoring */}
+            {/* 3. Participating Athletes and Sport-Specific Performance Inputs */}
             {selectedSessionId && (
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Participating Athletes & Scores
+                  <label className="block text-xs font-semibold tracking-wide text-brand-navy">
+                    Participating Athletes & Sport-Specific Scores
                   </label>
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    Metric: {activeSportMeta.scoreMetric} ({activeSportMeta.scoreUnit})
+                  <span className="text-[11px] text-slate-500">
+                    Only Present athletes may participate
                   </span>
                 </div>
 
                 {isLoadingRoster ? (
-                  <div className="py-6 text-center text-xs text-slate-400">
-                    <RefreshCw className="w-4 h-4 animate-spin mx-auto mb-1 text-brand-primary" />
-                    Loading eligible roster...
+                  <div className="p-4 text-center text-xs text-slate-400">
+                    Loading session attendance roster...
                   </div>
                 ) : sessionRoster.length === 0 ? (
                   <p className="text-xs text-slate-400 italic">
                     No athletes in this session roster.
                   </p>
                 ) : (
-                  <div className="max-h-60 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100">
+                  <div className="max-h-72 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100">
                     {sessionRoster.map((player) => {
                       const isPresent = player.status === "PRESENT";
                       const selection = selectedParticipants[player.playerId] || {
                         selected: false,
                         score: 0,
+                        role: player.playerSkillSnapshot || "all_rounder",
+                        stats: {
+                          runs: 0,
+                          wickets: 0,
+                          goals: 0,
+                          assists: 0,
+                          points: 0,
+                          rebounds: 0,
+                          sets: 0,
+                        },
                       };
+
+                      const normSport = matchSport.toLowerCase();
 
                       return (
                         <div
                           key={player.playerId}
-                          className={`p-2.5 flex items-center justify-between gap-3 text-xs ${
-                            isPresent ? "bg-white hover:bg-slate-50" : "bg-slate-50/70 opacity-60"
+                          className={`p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs ${
+                            isPresent
+                              ? "bg-white hover:bg-slate-50/80"
+                              : "bg-slate-50/70 opacity-60"
                           }`}
                         >
-                          <div className="flex items-center gap-2 min-w-0">
+                          {/* Athlete & Checkbox */}
+                          <div className="flex items-center gap-2.5 min-w-0">
                             {isPresent ? (
                               <input
                                 type="checkbox"
@@ -673,39 +753,159 @@ export default function CoachMatchesPage() {
                                 className="rounded text-brand-primary focus:ring-brand-primary h-4 w-4 border-slate-300"
                               />
                             ) : (
-                              <span className="h-4 w-4 flex items-center justify-center text-rose-500">
+                              <span className="h-4 w-4 flex items-center justify-center text-rose-500 font-black">
                                 &times;
                               </span>
                             )}
-                            <div className="truncate">
-                              <span
-                                className={`font-semibold ${
-                                  isPresent ? "text-slate-800" : "text-slate-400 line-through"
-                                }`}
-                              >
-                                {player.playerNameSnapshot}
-                              </span>
-                              {!isPresent && (
-                                <Badge variant="danger" className="ml-2 text-[10px] py-0 px-1.5">
-                                  Ineligible (Absent)
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <span
+                                  className={`font-bold ${
+                                    isPresent ? "text-brand-navy" : "text-slate-400 line-through"
+                                  }`}
+                                >
+                                  {player.playerNameSnapshot}
+                                </span>
+                                <Badge variant="neutral" className="text-[10px] py-0 px-1.5">
+                                  {formatSkillLabel(player.playerSkillSnapshot)}
                                 </Badge>
+                              </div>
+                              {!isPresent && (
+                                <span className="text-[10px] text-rose-600 font-semibold block">
+                                  Ineligible (Marked Absent in Session)
+                                </span>
                               )}
                             </div>
                           </div>
 
-                          {/* Score Input (Only for Present athletes) */}
+                          {/* Dynamic Sport-Specific Score Inputs */}
                           {isPresent && selection.selected && (
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <span className="text-[11px] text-slate-500 font-medium">
-                                {activeSportMeta.scoreMetric}:
-                              </span>
-                              <input
-                                type="number"
-                                min="0"
-                                value={selection.score}
-                                onChange={(e) => handleScoreChange(player.playerId, e.target.value)}
-                                className="w-16 rounded border border-slate-300 px-2 py-1 text-xs text-right font-bold text-brand-navy focus:border-brand-primary focus:outline-hidden"
-                              />
+                            <div className="flex items-center gap-3 shrink-0 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                              {/* CRICKET: Batsman Runs & Bowler Wickets */}
+                              {normSport === "cricket" && (
+                                <>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[11px] font-bold text-slate-600">
+                                      Runs:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.stats.runs ?? 0}
+                                      onChange={(e) =>
+                                        handleStatChange(player.playerId, "runs", e.target.value)
+                                      }
+                                      className="w-14 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-brand-navy focus:border-brand-primary"
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[11px] font-bold text-emerald-700">
+                                      Wkts:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.stats.wickets ?? 0}
+                                      onChange={(e) =>
+                                        handleStatChange(player.playerId, "wickets", e.target.value)
+                                      }
+                                      className="w-12 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-emerald-800 focus:border-brand-primary"
+                                    />
+                                  </div>
+                                </>
+                              )}
+
+                              {/* FOOTBALL: Goals & Assists */}
+                              {normSport === "football" && (
+                                <>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[11px] font-bold text-slate-600">
+                                      Goals ⚽:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.stats.goals ?? 0}
+                                      onChange={(e) =>
+                                        handleStatChange(player.playerId, "goals", e.target.value)
+                                      }
+                                      className="w-12 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-brand-navy focus:border-brand-primary"
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[11px] font-bold text-indigo-700">
+                                      Assists 👟:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.stats.assists ?? 0}
+                                      onChange={(e) =>
+                                        handleStatChange(player.playerId, "assists", e.target.value)
+                                      }
+                                      className="w-12 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-indigo-800 focus:border-brand-primary"
+                                    />
+                                  </div>
+                                </>
+                              )}
+
+                              {/* BASKETBALL: PTS, REB, AST */}
+                              {normSport === "basketball" && (
+                                <>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[11px] font-bold text-slate-600">
+                                      PTS:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.stats.points ?? 0}
+                                      onChange={(e) =>
+                                        handleStatChange(player.playerId, "points", e.target.value)
+                                      }
+                                      className="w-14 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-brand-navy focus:border-brand-primary"
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[11px] font-bold text-slate-600">
+                                      REB:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.stats.rebounds ?? 0}
+                                      onChange={(e) =>
+                                        handleStatChange(
+                                          player.playerId,
+                                          "rebounds",
+                                          e.target.value
+                                        )
+                                      }
+                                      className="w-12 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-brand-navy focus:border-brand-primary"
+                                    />
+                                  </div>
+                                </>
+                              )}
+
+                              {/* OTHER SPORTS: Generic Score Metric */}
+                              {normSport !== "cricket" &&
+                                normSport !== "football" &&
+                                normSport !== "basketball" && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[11px] text-slate-600 font-bold">
+                                      {activeSportMeta.scoreMetric}:
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={selection.score}
+                                      onChange={(e) =>
+                                        handleStatChange(player.playerId, "score", e.target.value)
+                                      }
+                                      className="w-16 rounded border border-slate-300 bg-white px-2 py-1 text-xs text-right font-bold text-brand-navy focus:border-brand-primary"
+                                    />
+                                  </div>
+                                )}
                             </div>
                           )}
                         </div>
@@ -740,61 +940,183 @@ export default function CoachMatchesPage() {
           </form>
         </Modal>
 
-        {/* VIEW MATCH SHEET DETAILS MODAL */}
+        {/* VIEW MATCH SCORECARD DETAILS MODAL (ESPN / CRICBUZZ STYLE SCORECARD) */}
         <Modal
           isOpen={isDetailModalOpen}
           onClose={() => setIsDetailModalOpen(false)}
-          title={selectedMatch ? `Match vs. ${selectedMatch.opponent}` : "Match Sheet"}
+          title={
+            selectedMatch ? `Match Scorecard: vs. ${selectedMatch.opponent}` : "Match Scorecard"
+          }
           description={
             selectedMatch
-              ? `${formatCalendarDate(selectedMatch.date)} &bull; ${selectedMatch.sport.toUpperCase()} &bull; Finalized Record`
+              ? `${formatCalendarDate(selectedMatch.date)} • ${selectedMatch.sport.toUpperCase()} • Official Finalized Fixture`
               : ""
           }
         >
           {selectedMatch && (
             <div className="space-y-4 pt-2">
-              <div className="grid grid-cols-3 gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+              {/* Fixture Summary Cards */}
+              <div className="grid grid-cols-3 gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                 <div>
-                  <span className="text-slate-500 block">Date</span>
+                  <span className="text-slate-500 block text-[11px]">Fixture Date</span>
                   <strong className="text-brand-navy">
                     {formatCalendarDate(selectedMatch.date)}
                   </strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Sport</span>
+                  <span className="text-slate-500 block text-[11px]">Sport Discipline</span>
                   <strong className="text-brand-navy uppercase">{selectedMatch.sport}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Total Athletes</span>
+                  <span className="text-slate-500 block text-[11px]">Participating Squad</span>
                   <strong className="text-brand-navy font-bold">
-                    {selectedMatch.totalParticipants}
+                    {selectedMatch.totalParticipants} Athletes
                   </strong>
                 </div>
               </div>
 
+              {/* Sport-Specific Scorecard Table */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-                  Athlete Performances & Scores
-                </h4>
-                <div className="border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100 max-h-60 overflow-y-auto">
-                  {selectedMatch.participants.map((p) => (
-                    <div
-                      key={p.playerId}
-                      className="p-2.5 flex items-center justify-between text-xs bg-white hover:bg-slate-50"
-                    >
-                      <span className="font-semibold text-slate-800">{p.playerNameSnapshot}</span>
-                      <span className="font-extrabold text-brand-primary text-sm">
-                        {p.score}{" "}
-                        <span className="text-xs font-medium text-slate-500">{p.scoreUnit}</span>
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
+                    Official Performance Scorecard
+                  </h4>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Verified against session roster
+                  </span>
                 </div>
+
+                {/* CRICKET SCORECARD TABLE */}
+                {selectedMatch.sport.toLowerCase() === "cricket" ? (
+                  <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-slate-100/80 border-b border-slate-200 text-slate-600 font-bold text-[11px]">
+                        <tr>
+                          <th className="py-2.5 px-3">Athlete</th>
+                          <th className="py-2.5 px-2">Role</th>
+                          <th className="py-2.5 px-2 text-right">Runs</th>
+                          <th className="py-2.5 px-2 text-right">Wickets</th>
+                          <th className="py-2.5 px-3 text-right">Match Performance</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 bg-white">
+                        {selectedMatch.participants.map((p) => (
+                          <tr key={p.playerId} className="hover:bg-slate-50/80">
+                            <td className="py-2.5 px-3 font-bold text-brand-navy">
+                              {p.playerNameSnapshot}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <span className="text-[11px] font-semibold text-slate-600">
+                                {formatSkillLabel(p.playerRoleSnapshot)}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-2 text-right font-black text-brand-navy">
+                              {p.stats?.runs ?? p.score}
+                            </td>
+                            <td className="py-2.5 px-2 text-right font-bold text-emerald-700">
+                              {p.stats?.wickets ?? 0} wkts
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <span className="inline-block px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200 font-bold text-brand-primary text-xs">
+                                {p.formattedSummary ||
+                                  formatMatchPerformance(
+                                    "cricket",
+                                    p.score,
+                                    p.stats,
+                                    p.playerRoleSnapshot
+                                  )}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : selectedMatch.sport.toLowerCase() === "football" ? (
+                  /* FOOTBALL SCORECARD TABLE */
+                  <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-slate-100/80 border-b border-slate-200 text-slate-600 font-bold text-[11px]">
+                        <tr>
+                          <th className="py-2.5 px-3">Player</th>
+                          <th className="py-2.5 px-2">Position</th>
+                          <th className="py-2.5 px-2 text-right">Goals ⚽</th>
+                          <th className="py-2.5 px-2 text-right">Assists 👟</th>
+                          <th className="py-2.5 px-3 text-right">Match Contribution</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 bg-white">
+                        {selectedMatch.participants.map((p) => (
+                          <tr key={p.playerId} className="hover:bg-slate-50/80">
+                            <td className="py-2.5 px-3 font-bold text-brand-navy">
+                              {p.playerNameSnapshot}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <span className="text-[11px] font-semibold text-slate-600">
+                                {formatSkillLabel(p.playerRoleSnapshot)}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-2 text-right font-black text-brand-primary">
+                              {p.stats?.goals ?? p.score}
+                            </td>
+                            <td className="py-2.5 px-2 text-right font-bold text-indigo-700">
+                              {p.stats?.assists ?? 0}
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 font-bold text-emerald-800 text-xs">
+                                {p.formattedSummary ||
+                                  formatMatchPerformance(
+                                    "football",
+                                    p.score,
+                                    p.stats,
+                                    p.playerRoleSnapshot
+                                  )}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  /* GENERIC / BASKETBALL SCORECARD TABLE */
+                  <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-slate-100/80 border-b border-slate-200 text-slate-600 font-bold text-[11px]">
+                        <tr>
+                          <th className="py-2.5 px-3">Athlete</th>
+                          <th className="py-2.5 px-2">Role</th>
+                          <th className="py-2.5 px-3 text-right">Performance & Score</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 bg-white">
+                        {selectedMatch.participants.map((p) => (
+                          <tr key={p.playerId} className="hover:bg-slate-50/80">
+                            <td className="py-2.5 px-3 font-bold text-brand-navy">
+                              {p.playerNameSnapshot}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <span className="text-[11px] font-semibold text-slate-600">
+                                {formatSkillLabel(p.playerRoleSnapshot)}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <span className="inline-block px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200 font-black text-brand-primary text-xs">
+                                {p.formattedSummary || `${p.score} ${p.scoreUnit}`}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end pt-2">
                 <Button variant="outline" size="sm" onClick={() => setIsDetailModalOpen(false)}>
-                  Close
+                  Close Scorecard
                 </Button>
               </div>
             </div>

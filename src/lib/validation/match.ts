@@ -8,7 +8,10 @@ export const matchParticipantInputSchema = z.object({
   score: z
     .number({ invalid_type_error: "Score must be a number" })
     .min(0, "Score cannot be negative")
-    .finite("Score must be a finite number"),
+    .finite("Score must be a finite number")
+    .optional(),
+  playerRole: z.string().trim().optional(),
+  stats: z.record(z.any()).optional(),
 });
 
 export const createMatchSchema = z

@@ -17,6 +17,7 @@ export const createPlayerSchema = z.object({
     .min(2, "Sport must be at least 2 characters.")
     .max(40, "Sport must be at most 40 characters.")
     .transform((val) => val.toLowerCase()),
+  skill: z.string().trim().max(50).optional(),
   email: z
     .string()
     .trim()
@@ -53,6 +54,7 @@ export const updatePlayerSchema = z.object({
     .max(40, "Sport must be at most 40 characters.")
     .transform((val) => val.toLowerCase())
     .optional(),
+  skill: z.string().trim().max(50).optional(),
   isActive: z.boolean().optional(),
 });
 

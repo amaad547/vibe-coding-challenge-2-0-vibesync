@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IRosterEntry {
   playerId: mongoose.Types.ObjectId;
   playerNameSnapshot: string;
+  playerSkillSnapshot?: string;
   status: "PRESENT" | "ABSENT" | null;
 }
 
@@ -29,6 +30,10 @@ const RosterEntrySchema = new Schema<IRosterEntry>(
     playerNameSnapshot: {
       type: String,
       required: true,
+      trim: true,
+    },
+    playerSkillSnapshot: {
+      type: String,
       trim: true,
     },
     status: {

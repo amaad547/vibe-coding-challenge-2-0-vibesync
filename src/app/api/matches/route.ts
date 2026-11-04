@@ -5,6 +5,7 @@ import { Match } from "@/models/Match";
 import { Session } from "@/models/Session";
 import { createMatchSchema } from "@/lib/validation/match";
 import { getSportScoreConfig } from "@/lib/services/sport-config";
+import { formatMatchPerformance, ParticipantStats } from "@/lib/constants/skills";
 import { normalizeCalendarDate, formatCalendarDate } from "@/lib/utils/date";
 import { AppError } from "@/lib/errors/api-error";
 
@@ -51,9 +52,12 @@ export async function GET(request: NextRequest) {
         participants: m.participants.map((p) => ({
           playerId: p.playerId.toString(),
           playerNameSnapshot: p.playerNameSnapshot,
+          playerRoleSnapshot: p.playerRoleSnapshot,
           score: p.score,
           scoreMetric: p.scoreMetric,
           scoreUnit: p.scoreUnit,
+          stats: p.stats,
+          formattedSummary: p.formattedSummary,
         })),
         status: m.status,
         createdBy: m.createdBy.toString(),
@@ -210,12 +214,33 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Derive score from stats if score is not provided
+      let finalScore = participant.score;
+      const stats = (participant.stats || {}) as ParticipantStats;
+      if (finalScore === undefined) {
+        if (sport.toLowerCase() === "cricket") {
+          finalScore = stats.runs ?? 0;
+        } else if (sport.toLowerCase() === "football") {
+          finalScore = stats.goals ?? 0;
+        } else if (sport.toLowerCase() === "basketball") {
+          finalScore = stats.points ?? 0;
+        } else {
+          finalScore = 0;
+        }
+      }
+
+      const playerRole = participant.playerRole || "";
+      const formattedSummary = formatMatchPerformance(sport, finalScore, stats, playerRole);
+
       verifiedParticipants.push({
         playerId: participant.playerId,
         playerNameSnapshot: rosterEntry.playerNameSnapshot,
-        score: participant.score,
+        playerRoleSnapshot: playerRole,
+        score: finalScore,
         scoreMetric,
         scoreUnit,
+        stats,
+        formattedSummary,
       });
     }
 
@@ -243,9 +268,12 @@ export async function POST(request: NextRequest) {
             participants: match.participants.map((p) => ({
               playerId: p.playerId.toString(),
               playerNameSnapshot: p.playerNameSnapshot,
+              playerRoleSnapshot: p.playerRoleSnapshot,
               score: p.score,
               scoreMetric: p.scoreMetric,
               scoreUnit: p.scoreUnit,
+              stats: p.stats,
+              formattedSummary: p.formattedSummary,
             })),
             status: match.status,
             createdBy: match.createdBy.toString(),

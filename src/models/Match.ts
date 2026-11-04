@@ -3,9 +3,12 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IMatchParticipant {
   playerId: mongoose.Types.ObjectId;
   playerNameSnapshot: string;
+  playerRoleSnapshot?: string;
   score: number;
   scoreMetric: string;
   scoreUnit: string;
+  stats?: Record<string, unknown>;
+  formattedSummary?: string;
 }
 
 export interface IMatch extends Document {
@@ -46,6 +49,18 @@ const MatchParticipantSchema = new Schema<IMatchParticipant>(
     scoreUnit: {
       type: String,
       required: true,
+      trim: true,
+    },
+    playerRoleSnapshot: {
+      type: String,
+      trim: true,
+    },
+    stats: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    formattedSummary: {
+      type: String,
       trim: true,
     },
   },

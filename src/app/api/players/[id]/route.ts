@@ -43,6 +43,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           name: player.name,
           age: player.age,
           sport: player.sport,
+          skill: player.skill || "All-Rounder",
           isActive: player.isActive,
           registrationStatus: player.registrationStatus,
           rejectionReason: player.rejectionReason,
@@ -99,6 +100,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (updates.name !== undefined) player.name = updates.name;
     if (updates.age !== undefined) player.age = updates.age;
     if (updates.sport !== undefined) player.sport = updates.sport;
+    if (updates.skill !== undefined) player.skill = updates.skill;
     if (updates.isActive !== undefined) player.isActive = updates.isActive;
 
     await player.save();
@@ -111,6 +113,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
           name: player.name,
           age: player.age,
           sport: player.sport,
+          skill: player.skill || "All-Rounder",
           isActive: player.isActive,
           registrationStatus: player.registrationStatus,
           updatedAt: player.updatedAt,

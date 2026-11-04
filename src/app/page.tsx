@@ -8,7 +8,6 @@ import {
   LogIn,
   UserPlus,
   Eye,
-  CheckCircle2,
   Lock,
   Sparkles,
   ChevronRight,
@@ -100,90 +99,6 @@ export default function HomePage() {
             <UserPlus className="w-4 h-4 text-brand-primary" />
             Athlete Registration Desk
           </Link>
-        </div>
-
-        {/* Glassmorphic Interactive Visual Preview */}
-        <div className="mt-14 max-w-4xl mx-auto rounded-2xl glass-card border border-slate-200/90 p-4 sm:p-6 shadow-xl shadow-slate-200/50 text-left">
-          <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200/60 gap-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-3 h-3 rounded-full bg-rose-400 inline-block" />
-              <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
-              <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
-              <span className="text-xs font-semibold text-slate-500 ml-2">
-                Live Academy Operations Feed
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">
-                <ShieldCheck className="w-3 h-3" /> System Verified
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-200">
-                <Lock className="w-3 h-3" /> Immutable Records
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-            {/* Session Card */}
-            <div className="rounded-xl bg-slate-50/80 border border-slate-200/70 p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                  Practice Session #48
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">
-                  LOCKED
-                </span>
-              </div>
-              <p className="text-sm font-bold text-brand-navy">Football Morning Drill</p>
-              <div className="flex justify-between text-xs text-slate-600 pt-1">
-                <span>Present: 14</span>
-                <span className="text-emerald-600 font-bold">87.5% Ratio</span>
-              </div>
-              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-emerald-500 h-full rounded-full" style={{ width: "87.5%" }} />
-              </div>
-            </div>
-
-            {/* Trial Readiness Card */}
-            <div className="rounded-xl bg-slate-50/80 border border-slate-200/70 p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                  Readiness Engine
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 flex items-center gap-1">
-                  <CheckCircle2 className="w-2.5 h-2.5" /> QUALIFIED
-                </span>
-              </div>
-              <p className="text-sm font-bold text-brand-navy">Dual-Condition Status</p>
-              <div className="flex justify-between text-xs text-slate-600 pt-1">
-                <span>Attendance: 85.0% (≥75%)</span>
-                <span>Matches: 3 (≥2)</span>
-              </div>
-              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-blue-600 h-full rounded-full" style={{ width: "100%" }} />
-              </div>
-            </div>
-
-            {/* Scout Registry Dossier */}
-            <div className="rounded-xl bg-slate-50/80 border border-slate-200/70 p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                  Talent Discovery
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
-                  LIVE SCOUT FEED
-                </span>
-              </div>
-              <p className="text-sm font-bold text-brand-navy">Scout Dossier Active</p>
-              <div className="flex justify-between text-xs text-slate-600 pt-1">
-                <span>Metrics Verified</span>
-                <span className="text-indigo-600 font-bold">Scout Access ON</span>
-              </div>
-              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-indigo-600 h-full rounded-full" style={{ width: "100%" }} />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

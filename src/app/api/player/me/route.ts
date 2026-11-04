@@ -74,6 +74,9 @@ export async function GET() {
         myScore: myPerformance ? myPerformance.score : 0,
         scoreMetric: myPerformance ? myPerformance.scoreMetric : "Points",
         scoreUnit: myPerformance ? myPerformance.scoreUnit : "Points",
+        playerRoleSnapshot: myPerformance?.playerRoleSnapshot || player.skill || "Athlete",
+        stats: myPerformance?.stats || {},
+        formattedSummary: myPerformance?.formattedSummary || "",
         totalAthletes: m.participants.length,
       };
     });
@@ -85,6 +88,7 @@ export async function GET() {
           name: player.name,
           age: player.age,
           sport: player.sport,
+          skill: player.skill || "All-Rounder",
           isActive: player.isActive,
           registrationStatus: player.registrationStatus,
           createdAt: player.createdAt,

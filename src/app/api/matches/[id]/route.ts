@@ -31,9 +31,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           participants: match.participants.map((p) => ({
             playerId: p.playerId.toString(),
             playerNameSnapshot: p.playerNameSnapshot,
+            playerRoleSnapshot: p.playerRoleSnapshot,
             score: p.score,
             scoreMetric: p.scoreMetric,
             scoreUnit: p.scoreUnit,
+            stats: p.stats,
+            formattedSummary: p.formattedSummary,
           })),
           status: match.status,
           createdBy: match.createdBy.toString(),

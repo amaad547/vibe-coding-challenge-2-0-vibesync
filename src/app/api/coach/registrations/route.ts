@@ -25,6 +25,7 @@ export async function GET() {
         name: p.name,
         age: p.age,
         sport: p.sport,
+        skill: p.skill || "All-Rounder",
         email: u?.email || "N/A",
         registrationStatus: p.registrationStatus,
         createdAt: p.createdAt,

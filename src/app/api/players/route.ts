@@ -71,6 +71,7 @@ export async function GET(request: NextRequest) {
         name: p.name,
         age: p.age,
         sport: p.sport,
+        skill: p.skill || "All-Rounder",
         isActive: p.isActive,
         registrationStatus: p.registrationStatus,
         email: u?.email || null,
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
       return ApiErrors.badRequest("Invalid player input data.", parsed.error.format());
     }
 
-    const { name, age, sport, email, temporaryPassword } = parsed.data;
+    const { name, age, sport, skill, email, temporaryPassword } = parsed.data;
 
     if (email) {
       const existingUser = await User.findOne({ email });
@@ -135,6 +136,7 @@ export async function POST(request: NextRequest) {
       name,
       age,
       sport,
+      skill: skill || "All-Rounder",
       isActive: true,
       registrationStatus: "VERIFIED",
       reviewedBy: coach.id,
@@ -168,6 +170,7 @@ export async function POST(request: NextRequest) {
             name: player.name,
             age: player.age,
             sport: player.sport,
+            skill: player.skill,
             isActive: player.isActive,
             registrationStatus: player.registrationStatus,
           },

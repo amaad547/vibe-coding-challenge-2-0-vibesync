@@ -6,6 +6,7 @@ export interface IPlayer extends Document {
   name: string;
   age: number;
   sport: string;
+  skill?: string;
   isActive: boolean;
   registrationStatus: RegistrationStatus;
   reviewedBy?: mongoose.Types.ObjectId;
@@ -36,6 +37,11 @@ const PlayerSchema = new Schema<IPlayer>(
       trim: true,
       lowercase: true,
       index: true,
+    },
+    skill: {
+      type: String,
+      trim: true,
+      default: "all_rounder",
     },
     isActive: {
       type: Boolean,

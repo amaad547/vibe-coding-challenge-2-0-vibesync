@@ -49,6 +49,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           roster: session.roster.map((r) => ({
             playerId: r.playerId.toString(),
             playerNameSnapshot: r.playerNameSnapshot,
+            playerSkillSnapshot: r.playerSkillSnapshot || "All-Rounder",
             status: r.status,
           })),
         },

@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
           name: p.playerName,
           age: p.age,
           sport: p.sport,
+          skill: p.skill || "All-Rounder",
           attendancePercentage: p.attendancePercentage,
           heldSessions: p.heldSessions,
           presentSessions: p.presentSessions,

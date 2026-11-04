@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       return ApiErrors.badRequest("Invalid registration input.", parsed.error.format());
     }
 
-    const { name, email, password, age, sport } = parsed.data;
+    const { name, email, password, age, sport, skill } = parsed.data;
 
     await connectToDatabase();
 
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       name,
       age,
       sport,
+      skill: skill || "All-Rounder",
       isActive: false,
       registrationStatus: "PENDING",
     });
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
             id: player._id.toString(),
             name: player.name,
             sport: player.sport,
+            skill: player.skill,
             age: player.age,
           },
           user: {
