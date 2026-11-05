@@ -16,6 +16,14 @@ export interface IUser extends Document {
   reviewedBy?: mongoose.Types.ObjectId;
   reviewedAt?: Date;
   rejectionReason?: string;
+  name?: string;
+  phone?: string;
+  officePhone?: string;
+  academyAddress?: string;
+  morningHours?: string;
+  eveningHours?: string;
+  emergencyContact?: string;
+  bio?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,6 +82,46 @@ const UserSchema = new Schema<IUser>(
     rejectionReason: {
       type: String,
       trim: true,
+    },
+    name: {
+      type: String,
+      trim: true,
+      default: "Dumka Head Coach",
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: "+91 94311 00000",
+    },
+    officePhone: {
+      type: String,
+      trim: true,
+      default: "+91 (06434) 220000",
+    },
+    academyAddress: {
+      type: String,
+      trim: true,
+      default: "Dumka Sports Complex, Near Indoor Stadium, SP College Road, Dumka, Jharkhand - 814101",
+    },
+    morningHours: {
+      type: String,
+      trim: true,
+      default: "5:30 AM – 9:00 AM",
+    },
+    eveningHours: {
+      type: String,
+      trim: true,
+      default: "3:30 PM – 7:00 PM",
+    },
+    emergencyContact: {
+      type: String,
+      trim: true,
+      default: "On-field Medical & Staff",
+    },
+    bio: {
+      type: String,
+      trim: true,
+      default: "Head coach and operations supervisor at Dumka Sports Academy.",
     },
   },
   {

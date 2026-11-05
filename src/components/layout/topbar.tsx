@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, Shield, LogOut } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -55,17 +56,35 @@ export function Topbar({ onMenuClick, title = "Overview", role = "COACH" }: Topb
           {currentRole.label}
         </Badge>
 
-        <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-          <div className="h-8 w-8 rounded-full bg-brand-navy text-white text-xs font-bold flex items-center justify-center">
-            {role.charAt(0)}
+        {role === "COACH" ? (
+          <Link
+            href="/coach/profile"
+            className="flex items-center gap-2 pl-2 border-l border-slate-200 group transition-all"
+            title="Click to view & edit Coach Profile and Contact Details"
+          >
+            <div className="h-8 w-8 rounded-full bg-brand-navy text-white text-xs font-bold flex items-center justify-center shadow-xs ring-2 ring-transparent group-hover:ring-brand-primary group-hover:bg-brand-primary group-hover:scale-105 transition-all">
+              C
+            </div>
+            <div className="hidden md:block text-left">
+              <p className="text-xs font-semibold text-brand-navy group-hover:text-brand-primary leading-tight transition-colors">
+                Coach Desk
+              </p>
+              <p className="text-[10px] text-slate-500 group-hover:text-slate-700">Edit Profile &rarr;</p>
+            </div>
+          </Link>
+        ) : (
+          <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+            <div className="h-8 w-8 rounded-full bg-brand-navy text-white text-xs font-bold flex items-center justify-center">
+              {role.charAt(0)}
+            </div>
+            <div className="hidden md:block text-left">
+              <p className="text-xs font-semibold text-brand-navy leading-tight">
+                {role === "SCOUT" ? "Scout Desk" : "Athlete Desk"}
+              </p>
+              <p className="text-[10px] text-slate-500">Dumka Academy</p>
+            </div>
           </div>
-          <div className="hidden md:block text-left">
-            <p className="text-xs font-semibold text-brand-navy leading-tight">
-              {role === "COACH" ? "Coach Desk" : role === "SCOUT" ? "Scout Desk" : "Athlete Desk"}
-            </p>
-            <p className="text-[10px] text-slate-500">Dumka Academy</p>
-          </div>
-        </div>
+        )}
 
         {/* Working Sign Out Button */}
         <button

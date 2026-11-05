@@ -9,6 +9,7 @@ import {
   CalendarCheck,
   Trophy,
   ShieldCheck,
+  User,
   LogOut,
   X,
 } from "lucide-react";
@@ -27,6 +28,7 @@ const navItems: NavItem[] = [
   { label: "Sessions", href: "/coach/sessions", icon: CalendarCheck },
   { label: "Matches", href: "/coach/matches", icon: Trophy },
   { label: "Readiness", href: "/coach/readiness", icon: ShieldCheck },
+  { label: "Profile", href: "/coach/profile", icon: User },
 ];
 
 interface SidebarProps {

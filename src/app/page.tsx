@@ -17,8 +17,13 @@ import {
   Clock,
 } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
+import { getAcademyContact } from "@/lib/services/contact";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const contact = await getAcademyContact();
+
   return (
     <main className="relative min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
       {/* Ambient background glow orbs for landing page only */}
@@ -369,10 +374,8 @@ export default function HomePage() {
                 <MapPin className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Academy Ground</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Dumka Sports Complex<br />
-                Near Indoor Stadium, SP College Road<br />
-                Dumka, Jharkhand &ndash; 814101
+              <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
+                {contact.academyAddress}
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-slate-100">
@@ -388,9 +391,13 @@ export default function HomePage() {
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Direct Helpline</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Reception: <a href="tel:+919431100000" className="text-brand-navy font-semibold hover:text-brand-primary">+91 94311 00000</a><br />
-                Office: <a href="tel:+916434220000" className="text-brand-navy font-semibold hover:text-brand-primary">+91 (06434) 220000</a><br />
-                Emergency: <span className="font-semibold text-slate-700">On-field Staff</span>
+                Helpline: <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="text-brand-navy font-semibold hover:text-brand-primary">{contact.phone}</a><br />
+                {contact.officePhone && (
+                  <>
+                    Office: <a href={`tel:${contact.officePhone.replace(/\s+/g, "")}`} className="text-brand-navy font-semibold hover:text-brand-primary">{contact.officePhone}</a><br />
+                  </>
+                )}
+                Emergency: <span className="font-semibold text-slate-700">{contact.emergencyContact}</span>
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-slate-100">
@@ -407,8 +414,8 @@ export default function HomePage() {
               <h3 className="text-sm font-bold text-brand-navy mb-1">Email Inquiries</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 General: <a href="mailto:desk@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">desk@dumkasports.org</a><br />
-                Head Coach: <a href="mailto:coach@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">coach@dumkasports.org</a><br />
-                Scout Liaison: <a href="mailto:scout@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">scout@dumkasports.org</a>
+                Head Coach: <a href={`mailto:${contact.email}`} className="text-brand-navy font-semibold hover:text-brand-primary">{contact.email}</a><br />
+                Coach Name: <span className="font-semibold text-slate-700">{contact.coachName}</span>
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-slate-100">
@@ -424,8 +431,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Practice Hours</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Morning: <span className="font-semibold text-brand-navy">5:30 AM &ndash; 9:00 AM</span><br />
-                Evening: <span className="font-semibold text-brand-navy">3:30 PM &ndash; 7:00 PM</span><br />
+                Morning: <span className="font-semibold text-brand-navy">{contact.morningHours}</span><br />
+                Evening: <span className="font-semibold text-brand-navy">{contact.eveningHours}</span><br />
                 Sunday: <span className="font-semibold text-slate-700">Tournament Matches</span>
               </p>
             </div>
