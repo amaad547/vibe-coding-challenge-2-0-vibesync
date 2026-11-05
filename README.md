@@ -11,8 +11,11 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/atlas)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 [![Zod](https://img.shields.io/badge/Zod-Validation-3E67B1?style=for-the-badge)](https://zod.dev/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-vc2--vibesync.vercel.app-brightgreen?style=for-the-badge&logo=vercel)](https://vc2-vibesync.vercel.app/)
 
 </div>
+
+> 🌐 **Live App**: [https://vc2-vibesync.vercel.app/](https://vc2-vibesync.vercel.app/)
 
 ---
 
@@ -147,6 +150,23 @@ The system is built around three distinct role portals — **Coach**, **Player**
 | **Badminton** | Singles, Doubles, Mixed Doubles, All-Rounder | Sets Won, Points |
 
 > **Sport Config** is stored in the `sportconfigs` collection and can be extended without code changes. The scoring metric and unit displayed in every scorecard derive from this config server-side.
+
+---
+
+## 🚀 Deployment
+
+The app is deployed on **Vercel** and available at:
+
+**[https://vc2-vibesync.vercel.app/](https://vc2-vibesync.vercel.app/)**
+
+The `main` branch is connected to Vercel for automatic deployments — every push to `main` triggers a new production build.
+
+| Portal | URL |
+|---|---|
+| **Landing Page** | [https://vc2-vibesync.vercel.app/](https://vc2-vibesync.vercel.app/) |
+| **Coach Login** | [https://vc2-vibesync.vercel.app/login](https://vc2-vibesync.vercel.app/login) |
+| **Player Login** | [https://vc2-vibesync.vercel.app/login](https://vc2-vibesync.vercel.app/login) |
+| **Scout Login** | [https://vc2-vibesync.vercel.app/login](https://vc2-vibesync.vercel.app/login) |
 
 ---
 
