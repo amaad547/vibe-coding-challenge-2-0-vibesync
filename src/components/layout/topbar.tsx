@@ -33,7 +33,7 @@ export function Topbar({ onMenuClick, title = "Overview", role = "COACH" }: Topb
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur-sm sm:px-6">
+    <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md sm:px-6 shadow-xs transition-all">
       <div className="flex items-center gap-3">
         <button
           type="button"

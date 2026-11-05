@@ -11,12 +11,16 @@ import {
   Lock,
   Sparkles,
   ChevronRight,
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
 } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy overflow-hidden">
+    <main className="relative min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
       {/* Ambient background glow orbs for landing page only */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none overflow-hidden -z-10">
         <div className="absolute -top-24 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse-subtle" />
@@ -24,8 +28,8 @@ export default function HomePage() {
         <div className="absolute top-48 left-1/2 -translate-x-1/2 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Navigation Header with Frosted Glass */}
-      <header className="sticky top-0 z-50 w-full glass-panel border-b border-slate-200/60 shadow-xs">
+      {/* Navigation Header with Frosted Glass - Sticky */}
+      <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <SportSyncLogo size="md" href="/" priority />
 
@@ -39,6 +43,9 @@ export default function HomePage() {
             </a>
             <a href="#roles" className="hover:text-brand-primary transition-colors">
               Role Portals
+            </a>
+            <a href="#contact" className="hover:text-brand-primary transition-colors">
+              Contact Desk
             </a>
           </nav>
 
@@ -335,6 +342,96 @@ export default function HomePage() {
               <Eye className="w-3.5 h-3.5" />
               Sign In to Scout Registry <ChevronRight className="w-3.5 h-3.5" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Details & Operations Desk Section */}
+      <section id="contact" className="max-w-6xl mx-auto px-4 sm:px-6 py-14 w-full border-t border-slate-200/80">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-brand-primary text-xs font-bold uppercase tracking-wider mb-3">
+            <Mail className="w-3.5 h-3.5" />
+            <span>Official Academy Operations Desk</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">
+            Contact Dumka Sports Academy
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl mx-auto">
+            Get in touch with coaching staff, tournament coordinators, and talent scout liaisons.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Location */}
+          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center mb-3">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-brand-navy mb-1">Academy Ground</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Dumka Sports Complex<br />
+                Near Indoor Stadium, SP College Road<br />
+                Dumka, Jharkhand &ndash; 814101
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <span className="text-[11px] font-semibold text-brand-primary">District Sports Authority</span>
+            </div>
+          </div>
+
+          {/* Direct Line */}
+          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+                <Phone className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-brand-navy mb-1">Direct Helpline</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Reception: <a href="tel:+919431100000" className="text-brand-navy font-semibold hover:text-brand-primary">+91 94311 00000</a><br />
+                Office: <a href="tel:+916434220000" className="text-brand-navy font-semibold hover:text-brand-primary">+91 (06434) 220000</a><br />
+                Emergency: <span className="font-semibold text-slate-700">On-field Staff</span>
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <span className="text-[11px] font-semibold text-emerald-600">Mon &ndash; Sat &bull; Active Desk</span>
+            </div>
+          </div>
+
+          {/* Email */}
+          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+                <Mail className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-brand-navy mb-1">Email Inquiries</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                General: <a href="mailto:desk@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">desk@dumkasports.org</a><br />
+                Head Coach: <a href="mailto:coach@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">coach@dumkasports.org</a><br />
+                Scout Liaison: <a href="mailto:scout@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">scout@dumkasports.org</a>
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <span className="text-[11px] font-semibold text-indigo-600">Average response &lt; 24h</span>
+            </div>
+          </div>
+
+          {/* Practice Hours */}
+          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+                <Clock className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-brand-navy mb-1">Practice Hours</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Morning: <span className="font-semibold text-brand-navy">5:30 AM &ndash; 9:00 AM</span><br />
+                Evening: <span className="font-semibold text-brand-navy">3:30 PM &ndash; 7:00 PM</span><br />
+                Sunday: <span className="font-semibold text-slate-700">Tournament Matches</span>
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <span className="text-[11px] font-semibold text-amber-600">6 Days / Week Training</span>
+            </div>
           </div>
         </div>
       </section>
