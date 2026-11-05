@@ -12,3 +12,4 @@ export const updateCoachProfileSchema = z.object({
 });
 
 export type UpdateCoachProfileInput = z.infer<typeof updateCoachProfileSchema>;
+

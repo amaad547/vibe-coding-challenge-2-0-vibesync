@@ -21,6 +21,7 @@ import {
   Users,
   Clock,
   CalendarCheck,
+  Calendar,
   Trophy,
   ShieldCheck,
   Plus,
@@ -175,6 +176,11 @@ export default function CoachDashboardPage() {
             <Link href="/coach/players">
               <Button variant="primary" size="sm" leftIcon={<Plus className="w-4 h-4" />}>
                 Add Athlete
+              </Button>
+            </Link>
+            <Link href="/coach/calendar">
+              <Button variant="outline" size="sm" leftIcon={<Calendar className="w-4 h-4" />}>
+                Calendar
               </Button>
             </Link>
             <Link href="/coach/sessions">

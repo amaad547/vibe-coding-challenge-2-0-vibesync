@@ -97,7 +97,7 @@ async function runPhase8AcceptanceTests() {
       registrationStatus: "VERIFIED",
     });
 
-    const sessionDate = normalizeCalendarDate("2026-11-04");
+    const sessionDate = normalizeCalendarDate(new Date());
     const session = await Session.create({
       date: sessionDate,
       sport: testSport,
@@ -248,12 +248,15 @@ async function runPhase8AcceptanceTests() {
 
     // 3B. Live Database Simulation
     // Create 3 additional closed sessions (Total closed sessions = 4)
-    const dates = ["2026-11-05", "2026-11-06", "2026-11-07"] as const;
+    const d1 = normalizeCalendarDate(new Date(Date.now() + 86400000));
+    const d2 = normalizeCalendarDate(new Date(Date.now() + 86400000 * 2));
+    const d3 = normalizeCalendarDate(new Date(Date.now() + 86400000 * 3));
+    const dates = [d1, d2, d3];
     for (let i = 0; i < dates.length; i++) {
       const d = dates[i];
       if (!d) continue;
       await Session.create({
-        date: normalizeCalendarDate(d),
+        date: d,
         sport: testSport,
         status: "CLOSED",
         closedAt: new Date(),
@@ -271,9 +274,8 @@ async function runPhase8AcceptanceTests() {
     }
 
     // Create Match 2 (Player 1 and Player 2 both participate in Match 2)
-    const match2Date = dates[0];
     const match2 = await Match.create({
-      date: normalizeCalendarDate(match2Date),
+      date: d1,
       sport: testSport,
       opponent: "Ranchi United",
       sessionId: session._id,
@@ -410,7 +412,7 @@ async function runPhase8AcceptanceTests() {
     // 4C. Real-time Access Revocation Test
     // Add another closed session where Player 1 is absent (now 3/5 = 60% < 75%)
     await Session.create({
-      date: normalizeCalendarDate("2026-11-08"),
+      date: normalizeCalendarDate(new Date(Date.now() + 86400000 * 4)),
       sport: testSport,
       status: "CLOSED",
       closedAt: new Date(),

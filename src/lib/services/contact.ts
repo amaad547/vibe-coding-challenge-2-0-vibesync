@@ -58,3 +58,4 @@ export async function getAcademyContact(): Promise<AcademyContactData> {
     return DEFAULT_CONTACT_DETAILS;
   }
 }
+

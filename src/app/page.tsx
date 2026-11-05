@@ -5,7 +5,6 @@ import {
   Trophy,
   ArrowRight,
   Activity,
-  LogIn,
   UserPlus,
   Eye,
   Lock,
@@ -17,6 +16,7 @@ import {
   Clock,
 } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
+import { LandingNavbar } from "@/components/layout/landing-navbar";
 import { getAcademyContact } from "@/lib/services/contact";
 
 export const dynamic = "force-dynamic";
@@ -33,45 +33,8 @@ export default async function HomePage() {
         <div className="absolute top-48 left-1/2 -translate-x-1/2 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Navigation Header with Frosted Glass - Sticky */}
-      <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <SportSyncLogo size="md" href="/" priority />
-
-          {/* Quick Section Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600">
-            <a href="#features" className="hover:text-brand-primary transition-colors">
-              Platform Features
-            </a>
-            <a href="#pipeline" className="hover:text-brand-primary transition-colors">
-              How It Works
-            </a>
-            <a href="#roles" className="hover:text-brand-primary transition-colors">
-              Role Portals
-            </a>
-            <a href="#contact" className="hover:text-brand-primary transition-colors">
-              Contact Desk
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-white/80 px-3.5 py-1.5 text-xs font-bold text-brand-navy hover:bg-blue-50/70 hover:border-blue-300 transition-all shadow-2xs gap-1.5"
-            >
-              <UserPlus className="w-3.5 h-3.5 text-brand-primary" />
-              <span>Player Registration</span>
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-lg bg-brand-primary px-4 py-2 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-brand-primaryHover transition-all gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In</span>
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Navigation Header with Frosted Glass - Sticky Responsive Navbar */}
+      <LandingNavbar />
 
       {/* Hero Section */}
       <section className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 sm:pt-20 sm:pb-24 text-center">

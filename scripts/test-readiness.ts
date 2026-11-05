@@ -138,10 +138,10 @@ async function runReadinessTests() {
     });
 
     // 3. Create 4 Closed Practice Sessions on or after enrollment
-    const d1 = normalizeCalendarDate("2026-11-04");
-    const d2 = normalizeCalendarDate("2026-11-05");
-    const d3 = normalizeCalendarDate("2026-11-06");
-    const d4 = normalizeCalendarDate("2026-11-07");
+    const d1 = normalizeCalendarDate(new Date(Date.now() + 86400000));
+    const d2 = normalizeCalendarDate(new Date(Date.now() + 86400000 * 2));
+    const d3 = normalizeCalendarDate(new Date(Date.now() + 86400000 * 3));
+    const d4 = normalizeCalendarDate(new Date(Date.now() + 86400000 * 4));
 
     // Session 1: A=PRESENT, B=PRESENT, C=PRESENT
     const s1 = await Session.create({
@@ -205,7 +205,7 @@ async function runReadinessTests() {
 
     // Also create 1 OPEN session to verify it is completely EXCLUDED
     const openSession = await Session.create({
-      date: normalizeCalendarDate("2026-11-08"),
+      date: normalizeCalendarDate(new Date(Date.now() + 86400000 * 5)),
       sport: testSport,
       status: "OPEN",
       roster: [

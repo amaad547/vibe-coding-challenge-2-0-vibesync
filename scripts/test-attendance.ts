@@ -81,7 +81,7 @@ async function runAttendanceTests() {
     });
 
     // 1A. Open Practice Session
-    const sessionDate = normalizeCalendarDate("2026-11-04");
+    const sessionDate = normalizeCalendarDate(new Date());
     const session1 = await Session.create({
       date: sessionDate,
       sport: testSport,

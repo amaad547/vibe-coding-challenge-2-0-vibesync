@@ -16,7 +16,6 @@ import {
   Save,
   CheckCircle2,
   AlertCircle,
-  ExternalLink,
   RefreshCw,
   Sparkles,
 } from "lucide-react";
@@ -151,15 +150,6 @@ export default function CoachProfilePage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              target="_blank"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-colors border border-white/15"
-              title="Preview Landing Page Contact Section"
-            >
-              <span>View Landing Page</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
             <Button
               variant="outline"
               size="sm"
@@ -269,12 +259,12 @@ export default function CoachProfilePage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
                     <MapPin className="w-4 h-4 text-emerald-600" />
-                    <span>Landing Page Public Contact Details</span>
+                    <span>Contact Details</span>
                   </CardTitle>
-                  <CardDescription>
+                  {/* <CardDescription>
                     These fields are published on the Landing Page Contact Section for students,
                     parents, and visiting scouts.
-                  </CardDescription>
+                  </CardDescription> */}
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Phone Numbers */}
@@ -414,7 +404,7 @@ export default function CoachProfilePage() {
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Landing Page Live Preview
+                    About Live Preview
                   </h3>
                   <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                     Auto Sync
@@ -479,14 +469,14 @@ export default function CoachProfilePage() {
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-slate-100 text-center">
-                  <Link
+                  {/* <Link
                     href="/"
                     target="_blank"
                     className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-primary hover:underline"
                   >
                     <span>Check live landing page</span>
                     <ExternalLink className="w-3 h-3" />
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
@@ -496,3 +486,4 @@ export default function CoachProfilePage() {
     </AppShell>
   );
 }
+

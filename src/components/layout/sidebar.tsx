@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Users,
   CalendarCheck,
+  Calendar,
   Trophy,
   ShieldCheck,
   User,
@@ -24,6 +25,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Overview", href: "/coach", icon: LayoutDashboard },
+  { label: "Calendar", href: "/coach/calendar", icon: Calendar },
   { label: "Players", href: "/coach/players", icon: Users },
   { label: "Sessions", href: "/coach/sessions", icon: CalendarCheck },
   { label: "Matches", href: "/coach/matches", icon: Trophy },

@@ -6,11 +6,8 @@ import {
   ShieldCheck,
   CalendarCheck,
   Trophy,
-  LogOut,
   RefreshCw,
   AlertTriangle,
-  CheckCircle2,
-  Calendar,
   Sparkles,
   Check,
   X,
@@ -18,19 +15,10 @@ import {
   Award,
   TrendingUp,
 } from "lucide-react";
-import { SportSyncLogo } from "@/components/brand/logo";
+import { PlayerNavbar } from "@/components/layout/player-navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LoadingOverlay } from "@/components/ui/loading";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-  TableEmpty,
-} from "@/components/ui/table";
 import { formatCalendarDate } from "@/lib/utils/date";
 import { formatSkillLabel } from "@/lib/constants/skills";
 
@@ -84,8 +72,7 @@ interface PlayerPortalData {
 export default function PlayerPortalPage() {
   const router = useRouter();
   const [data, setData] = React.useState<PlayerPortalData | null>(null);
-  const [activeTab, setActiveTab] = React.useState<"OVERVIEW" | "SESSIONS" | "MATCHES">("OVERVIEW");
-  const [sessionFilter, setSessionFilter] = React.useState<"ALL" | "PRESENT" | "ABSENT">("ALL");
+  const [activitiesCount, setActivitiesCount] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -122,15 +109,16 @@ export default function PlayerPortalPage() {
     loadProfile();
   }, [loadProfile]);
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // Continue to login
-    }
-    router.push("/login");
-    router.refresh();
-  };
+  React.useEffect(() => {
+    fetch("/api/activities?upcoming=true")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.data?.activities) {
+          setActivitiesCount(json.data.activities.length);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   if (isLoading) {
     return (
@@ -146,32 +134,16 @@ export default function PlayerPortalPage() {
   const sessions = data?.sessions || [];
   const matches = data?.matches || [];
 
-  const filteredSessions = sessions.filter((s) => {
-    if (sessionFilter === "PRESENT") return s.status === "PRESENT";
-    if (sessionFilter === "ABSENT") return s.status === "ABSENT";
-    return true;
-  });
-
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
-      {/* Top Header */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/90 bg-white/95 px-4 sm:px-8 py-3.5 backdrop-blur-md flex justify-between items-center shadow-xs">
-        <SportSyncLogo size="sm" href="/player" />
-        <div className="flex items-center gap-3">
-          <Badge variant="info" dot className="font-semibold text-xs">
-            Athlete Portal
-          </Badge>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            leftIcon={<LogOut className="h-3.5 w-3.5" />}
-            className="text-xs font-bold rounded-lg border-slate-200"
-          >
-            Sign Out
-          </Button>
-        </div>
-      </header>
+      {/* Top Navbar */}
+      <PlayerNavbar
+        player={player}
+        isReady={ready?.isReady}
+        activitiesCount={activitiesCount}
+        sessionsCount={sessions.length}
+        matchesCount={matches.length}
+      />
 
       {/* Main Body */}
       <main className="max-w-5xl mx-auto w-full p-4 sm:p-8 space-y-6 flex-1">
@@ -249,7 +221,7 @@ export default function PlayerPortalPage() {
               </div>
               <div>
                 <p className="text-sm font-black text-emerald-950 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> TRIAL READY &bull; PROFILE
+                  <CheckCircle2Icon className="w-4 h-4 text-emerald-600" /> TRIAL READY &bull; PROFILE
                   ACTIVE FOR SCOUTS
                 </p>
                 <p className="text-xs text-emerald-800 mt-0.5">
@@ -417,417 +389,195 @@ export default function PlayerPortalPage() {
           </div>
         </div>
 
-        {/* Tab Navigation Pill Bar */}
-        <div className="flex flex-wrap gap-2 p-1.5 bg-slate-200/60 rounded-xl">
-          <button
-            type="button"
-            onClick={() => setActiveTab("OVERVIEW")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "OVERVIEW"
-                ? "bg-white text-brand-primary shadow-2xs"
-                : "text-slate-600 hover:text-brand-navy hover:bg-white/50"
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Trial Readiness & Overview</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("SESSIONS")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "SESSIONS"
-                ? "bg-white text-brand-primary shadow-2xs"
-                : "text-slate-600 hover:text-brand-navy hover:bg-white/50"
-            }`}
-          >
-            <CalendarCheck className="w-3.5 h-3.5" />
-            <span>Practice Attendance Log</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-slate-100 text-[10px] text-slate-600">
-              {sessions.length}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("MATCHES")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "MATCHES"
-                ? "bg-white text-brand-primary shadow-2xs"
-                : "text-slate-600 hover:text-brand-navy hover:bg-white/50"
-            }`}
-          >
-            <Trophy className="w-3.5 h-3.5" />
-            <span>Match Performances</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-slate-100 text-[10px] text-slate-600">
-              {matches.length}
-            </span>
-          </button>
-        </div>
-
-        {/* TAB 1: OVERVIEW & READINESS */}
-        {activeTab === "OVERVIEW" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Readiness Milestone Breakdown Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black text-brand-navy">
-                      Readiness Milestone Tracker
-                    </h3>
-                    <p className="text-[11px] text-slate-500">
-                      Dumka Sports Academy Dual-Condition Rule
-                    </p>
-                  </div>
+        {/* Readiness Deep-Dive & Athletic Standing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Readiness Milestone Breakdown Card */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-brand-primary flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
-                {ready?.isReady ? (
-                  <Badge variant="success" dot className="font-bold">
-                    Ready
-                  </Badge>
-                ) : (
-                  <Badge variant="neutral" className="font-semibold">
-                    In Progress
-                  </Badge>
-                )}
+                <div>
+                  <h3 className="text-sm font-black text-brand-navy">
+                    Readiness Milestone Tracker
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Dumka Sports Academy Dual-Condition Rule
+                  </p>
+                </div>
               </div>
-
-              {/* Condition 1 */}
-              <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-2.5">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="flex items-center gap-2 text-brand-navy">
-                    {ready?.isAttendanceEligible ? (
-                      <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                        <Check className="w-3 h-3" />
-                      </span>
-                    ) : (
-                      <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
-                        <X className="w-3 h-3" />
-                      </span>
-                    )}
-                    1. Practice Attendance Rate (≥ 75.0%)
-                  </span>
-                  <span
-                    className={
-                      ready?.isAttendanceEligible
-                        ? "text-emerald-600 font-black"
-                        : "text-amber-600 font-bold"
-                    }
-                  >
-                    {att ? att.percentage.toFixed(1) : "0.0"}%
-                  </span>
-                </div>
-                <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-300 ${
-                      ready?.isAttendanceEligible ? "bg-emerald-500" : "bg-amber-400"
-                    }`}
-                    style={{ width: `${Math.min(100, att?.percentage || 0)}%` }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  {ready?.isAttendanceEligible
-                    ? "✓ Attendance requirement satisfied."
-                    : `Attend closed practice sessions to reach 75.0% (currently ${att?.presentSessions || 0}/${att?.heldSessions || 0} sessions present).`}
-                </p>
-              </div>
-
-              {/* Condition 2 */}
-              <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-2.5">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="flex items-center gap-2 text-brand-navy">
-                    {ready?.isMatchesEligible ? (
-                      <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                        <Check className="w-3 h-3" />
-                      </span>
-                    ) : (
-                      <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
-                        <X className="w-3 h-3" />
-                      </span>
-                    )}
-                    2. Finalized Matches (≥ 2 Matches)
-                  </span>
-                  <span
-                    className={
-                      ready?.isMatchesEligible
-                        ? "text-emerald-600 font-black"
-                        : "text-amber-600 font-bold"
-                    }
-                  >
-                    {ready?.matchesPlayed || 0} / 2
-                  </span>
-                </div>
-                <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-300 ${
-                      ready?.isMatchesEligible ? "bg-emerald-500" : "bg-amber-400"
-                    }`}
-                    style={{
-                      width: `${Math.min(100, ((ready?.matchesPlayed || 0) / 2) * 100)}%`,
-                    }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  {ready?.isMatchesEligible
-                    ? "✓ Match experience requirement satisfied."
-                    : `You need ${2 - (ready?.matchesPlayed || 0)} more finalized match fixture appearance(s).`}
-                </p>
-              </div>
-
-              {/* Objective Rule Note */}
-              <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 text-xs text-blue-900 leading-relaxed">
-                <p className="font-bold flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-brand-primary" /> Academy Integrity Guarantee
-                </p>
-                <p className="mt-1 text-[11px]">
-                  Readiness is calculated mathematically without subjective bias. The exact
-                  unrounded ratio is evaluated on every query.
-                </p>
-              </div>
+              {ready?.isReady ? (
+                <Badge variant="success" dot className="font-bold">
+                  Ready
+                </Badge>
+              ) : (
+                <Badge variant="neutral" className="font-semibold">
+                  In Progress
+                </Badge>
+              )}
             </div>
 
-            {/* Performance Summary / Advisory Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs space-y-5 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                    <Award className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black text-brand-navy">Athletic Standing</h3>
-                    <p className="text-[11px] text-slate-500">
-                      Discipline: {player?.sport.toUpperCase()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-500">Registration Status:</span>
-                    <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
-                      VERIFIED ATHLETE
+            {/* Condition 1 */}
+            <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-2.5">
+              <div className="flex items-center justify-between text-xs font-bold">
+                <span className="flex items-center gap-2 text-brand-navy">
+                  {ready?.isAttendanceEligible ? (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                      <Check className="w-3 h-3" />
                     </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-500">Total Practice Drills Attended:</span>
-                    <span className="font-black text-brand-navy">
-                      {att?.presentSessions || 0} sessions
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                      <X className="w-3 h-3" />
                     </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-500">Match Participation Record:</span>
-                    <span className="font-black text-brand-navy">
-                      {ready?.matchesPlayed || 0} fixtures
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="text-slate-500">Scout Visibility:</span>
-                    <span
-                      className={`font-bold text-[11px] ${
-                        ready?.isReady ? "text-emerald-700 font-black" : "text-slate-500"
-                      }`}
-                    >
-                      {ready?.isReady ? "Active in Scout Registry" : "Private until Qualified"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
-                <p className="font-bold text-brand-navy">Coach Advisory Note:</p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Only athletes marked PRESENT in the practice session on the match date are
-                  eligible for match squad selection. Regular attendance is key to qualification.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: PRACTICE SESSIONS HISTORY */}
-        {activeTab === "SESSIONS" && (
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
-            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div>
-                <h3 className="text-base font-black text-brand-navy">
-                  Practice Sessions Attendance Log
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Locked practice sessions for {player?.sport.toUpperCase()} since enrollment
-                </p>
-              </div>
-
-              {/* Status Filter Buttons */}
-              <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg text-xs font-bold">
-                <button
-                  type="button"
-                  onClick={() => setSessionFilter("ALL")}
-                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                    sessionFilter === "ALL"
-                      ? "bg-white text-brand-navy shadow-2xs"
-                      : "text-slate-500 hover:text-brand-navy"
-                  }`}
+                  )}
+                  1. Practice Attendance Rate (≥ 75.0%)
+                </span>
+                <span
+                  className={
+                    ready?.isAttendanceEligible
+                      ? "text-emerald-600 font-black"
+                      : "text-amber-600 font-bold"
+                  }
                 >
-                  All ({sessions.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSessionFilter("PRESENT")}
-                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                    sessionFilter === "PRESENT"
-                      ? "bg-emerald-600 text-white shadow-2xs"
-                      : "text-slate-500 hover:text-emerald-700"
-                  }`}
-                >
-                  Present ({att?.presentSessions || 0})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSessionFilter("ABSENT")}
-                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                    sessionFilter === "ABSENT"
-                      ? "bg-rose-600 text-white shadow-2xs"
-                      : "text-slate-500 hover:text-rose-700"
-                  }`}
-                >
-                  Absent ({att?.absentSessions || 0})
-                </button>
+                  {att ? att.percentage.toFixed(1) : "0.0"}%
+                </span>
               </div>
-            </div>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Practice Date</TableHead>
-                  <TableHead>Sport</TableHead>
-                  <TableHead>Session ID</TableHead>
-                  <TableHead className="text-right">Attendance Record</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSessions.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4}>
-                      <TableEmpty
-                        message="No practice sessions match this filter"
-                        description="Sessions conducted by your coach will appear here once locked."
-                      />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredSessions.map((s) => (
-                    <TableRow key={s.id} className="hover:bg-slate-50/70">
-                      <TableCell className="font-bold text-xs text-brand-navy">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {formatCalendarDate(s.date)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="uppercase text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                          {s.sport}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-mono text-[11px] text-slate-400">
-                        {s.id.slice(-8)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {s.status === "PRESENT" ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> PRESENT
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold">
-                            <X className="w-3.5 h-3.5 text-rose-600" /> ABSENT
-                          </span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-
-        {/* TAB 3: MATCH FIXTURES */}
-        {activeTab === "MATCHES" && (
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
-            <div className="p-5 sm:p-6 border-b border-slate-100">
-              <h3 className="text-base font-black text-brand-navy">
-                Match Performances & Individual Score Ledger
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Finalized match fixtures with official sport-derived metric units
+              <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    ready?.isAttendanceEligible ? "bg-emerald-500" : "bg-amber-400"
+                  }`}
+                  style={{ width: `${Math.min(100, att?.percentage || 0)}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                {ready?.isAttendanceEligible
+                  ? "✓ Attendance requirement satisfied."
+                  : `Attend closed practice sessions to reach 75.0% (currently ${att?.presentSessions || 0}/${att?.heldSessions || 0} sessions present).`}
               </p>
             </div>
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Fixture Date</TableHead>
-                  <TableHead>Sport</TableHead>
-                  <TableHead>Opponent</TableHead>
-                  <TableHead>Individual Score</TableHead>
-                  <TableHead className="text-right">Squad Roster</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {matches.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5}>
-                      <TableEmpty
-                        message="No finalized match fixtures recorded yet"
-                        description="Participate in practice sessions to become eligible for upcoming match sheets."
-                      />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  matches.map((m) => (
-                    <TableRow key={m.id} className="hover:bg-slate-50/70">
-                      <TableCell className="font-bold text-xs text-brand-navy">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {formatCalendarDate(m.date)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="uppercase text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                          {m.sport}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-bold text-xs text-brand-navy">
-                        vs. {m.opponent}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-brand-primary text-xs font-black">
-                            {m.formattedSummary || `${m.myScore} ${m.scoreUnit}`}
-                          </span>
-                          {m.playerRoleSnapshot && (
-                            <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">
-                              {formatSkillLabel(m.playerRoleSnapshot)}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right text-xs font-semibold text-slate-500">
-                        {m.totalAthletes} Athletes
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </main>
+            {/* Condition 2 */}
+            <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-2.5">
+              <div className="flex items-center justify-between text-xs font-bold">
+                <span className="flex items-center gap-2 text-brand-navy">
+                  {ready?.isMatchesEligible ? (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                      <Check className="w-3 h-3" />
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                      <X className="w-3 h-3" />
+                    </span>
+                  )}
+                  2. Finalized Matches (≥ 2 Matches)
+                </span>
+                <span
+                  className={
+                    ready?.isMatchesEligible
+                      ? "text-emerald-600 font-black"
+                      : "text-amber-600 font-bold"
+                  }
+                >
+                  {ready?.matchesPlayed || 0} / 2
+                </span>
+              </div>
+              <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    ready?.isMatchesEligible ? "bg-emerald-500" : "bg-amber-400"
+                  }`}
+                  style={{
+                    width: `${Math.min(100, ((ready?.matchesPlayed || 0) / 2) * 100)}%`,
+                  }}
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                {ready?.isMatchesEligible
+                  ? "✓ Match experience requirement satisfied."
+                  : `You need ${2 - (ready?.matchesPlayed || 0)} more finalized match fixture appearance(s).`}
+              </p>
+            </div>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-400">
-        &copy; {new Date().getFullYear()} SportSync &bull; Dumka Sports Academy Management Desk
-      </footer>
+            {/* Objective Rule Note */}
+            <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 text-xs text-blue-900 leading-relaxed">
+              <p className="font-bold flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-brand-primary" /> Academy Integrity Guarantee
+              </p>
+              <p className="mt-1 text-[11px]">
+                Readiness is calculated mathematically without subjective bias. The exact
+                unrounded ratio is evaluated on every query.
+              </p>
+            </div>
+          </div>
+
+          {/* Performance Summary / Advisory Card */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs space-y-5 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Award className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-brand-navy">Athletic Standing</h3>
+                  <p className="text-[11px] text-slate-500">
+                    Discipline: {player?.sport.toUpperCase()}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <span className="text-slate-600">Registration Status:</span>
+                  <Badge variant="success">
+                    {player?.registrationStatus === "VERIFIED"
+                      ? "VERIFIED ATHLETE"
+                      : player?.registrationStatus}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <span className="text-slate-600">Total Practice Drills Attended:</span>
+                  <span className="font-bold text-brand-navy">
+                    {att?.presentSessions || 0} sessions
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <span className="text-slate-600">Match Participation Record:</span>
+                  <span className="font-bold text-brand-navy">
+                    {ready?.matchesPlayed || 0} fixtures
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <span className="text-slate-600">Scout Visibility:</span>
+                  <span
+                    className={`font-black ${
+                      ready?.isReady ? "text-emerald-600" : "text-slate-400"
+                    }`}
+                  >
+                    {ready?.isReady ? "Active in Scout Registry" : "Private until Qualified"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
+              <p className="font-bold text-brand-navy">Coach Advisory Note:</p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Only athletes marked PRESENT in the practice session on the match date are
+                eligible for match squad selection. Regular attendance is key to qualification.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
+}
+
+function CheckCircle2Icon({ className }: { className?: string }) {
+  return <Check className={className} />;
 }
