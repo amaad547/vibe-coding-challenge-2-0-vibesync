@@ -18,15 +18,16 @@
 
 ## 📋 Overview
 
-**SportSync** is a full-stack sports academy management platform built for **Dumka Sports Academy**. It replaces paper-based registers and spreadsheets with a secure, role-aware digital system that tracks players from registration all the way through trial readiness — with tamper-proof attendance records, sport-specific match scorecards, and an independent scout discovery portal.
+**SportSync** is a full-stack sports academy management platform built for **Dumka Sports Academy**. It replaces paper-based registers and spreadsheets with a secure, role-aware digital system that tracks players from registration all the way through trial readiness — with tamper-proof attendance records, sport-specific match scorecards, a full training & match calendar, and an independent scout discovery portal.
 
-The system is built around three distinct role portals — **Coach**, **Player**, and **Scout** — each with server-enforced access rules. No client-side filtering is trusted for security-sensitive data; every critical invariant (attendance locks, readiness thresholds, scout eligibility) is enforced at the API layer.
+The system is built around three distinct role portals — **Coach**, **Player**, and **Scout** — each with server-enforced access rules. No client-side filtering is trusted for security-sensitive data; every critical invariant (attendance locks, readiness thresholds, scout eligibility, calendar permissions) is enforced at the API layer.
 
 ---
 
 ## ✨ Key Features
 
 ### 🏋️ Coach Portal
+
 - **Player Management** — Add players directly (instantly verified) or manage the self-registration approval queue (Approve / Reject)
 - **Practice Session Management** — Create sessions by date and sport, mark each eligible player PRESENT or ABSENT, then lock sessions permanently
 - **Immutable Attendance Locks** — Once a session is closed, attendance records cannot be modified through any UI action or direct API call
@@ -34,19 +35,30 @@ The system is built around three distinct role portals — **Coach**, **Player**
 - **Sport-Specific Statistics** — Cricket: runs & wickets per player role; Football: goals & assists; Basketball: points, rebounds & assists; Athletics & Badminton supported
 - **Trial Readiness Overview** — See every player's live readiness status (attendance %, matches played, READY / NOT READY) in a single dashboard view
 - **Dashboard Overview** — Aggregated stats: total players, pending registrations, open sessions, upcoming matches
+- **Training & Match Calendar** — Full calendar module with Month / Week / Day / List views; create, edit and cancel training sessions and match fixtures with duplicate-prevention checks; link sessions and matches to existing attendance/match modules; cancellation requires a reason
+- **Coach Profile** — Edit personal info and academy contact details (phone, office phone, address, hours, emergency contact); changes automatically reflect on the public landing page contact section
 
 ### 👟 Player Portal
-- **Self-Service Profile** — View personal profile including sport, registered skill/position, and verification status
-- **Attendance Summary** — Live attendance percentage calculated from closed sessions only
-- **Trial Readiness Tracker** — Dual-condition progress indicator: attendance ≥ 75% AND matches played ≥ 2 (both must pass)
-- **Match History** — Broadcast-style performance lines per match (e.g., *"45 Runs · Batsman"*, *"2 Goals · Striker"*)
-- **Self-Registration with Skill Selection** — Players choose their sport and position/skill at sign-up
+
+- **Trial Readiness & Overview** — Dual-condition progress indicator: attendance ≥ 75% AND matches played ≥ 2 (both must pass); scout visibility status shown live
+- **Upcoming Schedule & Calendar** — Read-only view of all upcoming training sessions and match fixtures; identical visual layout to the coach calendar
+- **Practice Attendance Log** — Full history of closed sessions with PRESENT / ABSENT status per session and running attendance percentage
+- **Match Performances** — Broadcast-style performance lines per match (e.g., *"45 Runs · Batsman"*, *"2 Goals · Striker"*) across all finalized fixtures
+- **Shared Responsive Navbar** — Tab-based navigation between the four player pages with mobile hamburger drawer; active route highlighted
+- **Self-Registration with Skill Selection** — Players choose their sport and position/skill at sign-up; account starts PENDING until coach approves
 
 ### 🔭 Scout Portal
+
 - **Talent Discovery Registry** — Paginated, filterable list of READY athletes only
 - **Player Dossiers** — Full profile with verified attendance evidence and match performance history
-- **Real-Time Access Revocation** — If a player's readiness drops below threshold (missed sessions or insufficient match count), they immediately disappear from scout view — no manual intervention required
+- **Real-Time Access Revocation** — If a player's readiness drops below threshold, they immediately disappear from scout view — no manual intervention required
 - **Server-Side Enforcement** — Scout API endpoints reject non-ready players even on direct API calls; frontend filtering is never the sole guard
+
+### 🌐 Landing Page
+
+- **Responsive Navbar** — Sticky navigation with mobile hamburger menu; Register / Login button moves into the hamburger drawer on small screens
+- **Dynamic Contact Section** — Phone, office phone, address, office hours and emergency contact are read live from the coach's profile — no hardcoding needed
+- **Role Portals Showcase** — Visual entry points to Coach, Player and Scout portals
 
 ---
 
@@ -62,6 +74,11 @@ The system is built around three distinct role portals — **Coach**, **Player**
 | **Server-Side Score Derivation** | `scoreMetric` and `scoreUnit` (e.g., *"Goals"*, *"Runs"*) are always read from `SportConfig` on the server. Client-supplied values are silently discarded. |
 | **Scout Privacy Invariant** | Scout endpoints filter by `isReady: true` in the database query, not in application logic. A player who becomes NOT READY is never returned, even by ID. |
 | **Registration Verification** | Self-registered players start as `PENDING` and must be explicitly approved by a coach to become `VERIFIED`. Coach-created players are `VERIFIED` immediately. |
+| **Calendar Duplicate Prevention** | No two activities may share the same date, sport, type, and overlapping time slot. The server rejects the request with `409 Conflict`. |
+| **Scheduling Invariant** | Adding a match to the calendar does **not** auto-finalize it or create scores. Calendar events and match scorecards are independent. |
+| **Calendar Player RBAC** | Players receive `HTTP 200` on `GET /api/activities`; any create / edit / cancel / delete attempt returns `HTTP 403 Forbidden`. |
+| **Dynamic Activity Status** | An activity auto-resolves to `COMPLETED` when its linked Session is `CLOSED` or its linked Match is `FINALIZED`. |
+| **Coach Profile → Landing Page Sync** | Contact details (phone, office phone, address, hours, emergency contact) are served dynamically from the coach's profile record to the public landing page. |
 
 ---
 
@@ -95,14 +112,15 @@ The system is built around three distinct role portals — **Coach**, **Player**
 ┌───────────────────────────▼─────────────────────────────────┐
 │                      API Route Layer                        │
 │  /api/coach/**   │  /api/player/**  │  /api/scout/**        │
-│  Auth: requireRole('COACH')  │  requireRole('PLAYER/SCOUT') │
-│  Input: Zod validation on every POST/PATCH body             │
-│  Business logic: Readiness Service, Sport Config Service    │
+│  /api/activities/**  │  /api/contact  │  /api/sports        │
+│  Auth: requireRole()  │  Zod validation on every mutation   │
+│  Business logic: Readiness, Sport Config, Calendar Services │
 └───────────────────────────┬─────────────────────────────────┘
                             │  Mongoose ODM
 ┌───────────────────────────▼─────────────────────────────────┐
 │                      MongoDB Atlas                          │
-│   users │ players │ sessions │ matches │ sportconfigs       │
+│  users │ players │ sessions │ matches │ sportconfigs        │
+│  activities                                                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -112,6 +130,7 @@ The system is built around three distinct role portals — **Coach**, **Player**
 |---|---|---|
 | **Readiness Service** | `src/lib/services/readiness.ts` | `calculatePlayerReadiness()` — queries closed sessions & finalized matches, applies dual-condition logic |
 | **Sport Config Service** | `src/lib/services/sport-config.ts` | `getSportScoreConfig()` — server-only lookup; derives `scoreMetric` & `scoreUnit` from DB |
+| **Contact Service** | `src/lib/services/contact.ts` | `getAcademyContact()` — reads coach profile contact fields for the public landing page |
 | **Session Auth** | `src/lib/auth/session.ts` | `requireRole()`, `requireUser()` — extracts and validates JWT from cookie |
 | **Skills Registry** | `src/lib/constants/skills.ts` | `SPORT_SKILLS` map, `getSkillsForSport()`, `formatMatchPerformance()` |
 
@@ -143,8 +162,8 @@ The system is built around three distinct role portals — **Coach**, **Player**
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/sportsync.git
-cd sportsync
+git clone https://github.com/amaad547/vibe-coding-challenge-2-0-vibesync.git
+cd SportSync
 ```
 
 ### 2. Install Dependencies
@@ -258,6 +277,24 @@ All API routes are under `/api/`. Authenticated routes require a valid session c
 | `GET` | `/api/readiness` | COACH | Readiness table for all players (attendance %, matches played, status) |
 | `GET` | `/api/coach/overview` | COACH | Dashboard summary stats |
 
+### Coach — Profile
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/coach/profile` | COACH | Retrieve coach profile (personal info + academy contact details) |
+| `PATCH` | `/api/coach/profile` | COACH | Update coach profile; changes are immediately reflected on the landing page contact section |
+
+### Calendar Activities
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/activities` | Any Auth | List all activities (supports `sport`, `type`, `status`, `from`, `to` query params) |
+| `POST` | `/api/activities` | COACH | Create a training session or match fixture; validates for duplicate time slot |
+| `GET` | `/api/activities/[id]` | Any Auth | Get single activity detail |
+| `PATCH` | `/api/activities/[id]` | COACH | Update activity fields (title, date, time, venue, notes, etc.) |
+| `DELETE` | `/api/activities/[id]` | COACH | Delete an activity permanently |
+| `POST` | `/api/activities/[id]/cancel` | COACH | Cancel an activity with a mandatory reason; sets `status: CANCELLED` and `cancelledAt` |
+
 ### Player
 
 | Method | Route | Auth | Description |
@@ -270,6 +307,12 @@ All API routes are under `/api/`. Authenticated routes require a valid session c
 |---|---|---|---|
 | `GET` | `/api/scout/ready-players` | SCOUT | Paginated list of READY athletes only (supports search & sport filter) |
 | `GET` | `/api/scout/ready-players/[id]` | SCOUT | Individual player dossier (attendance evidence + match scores) |
+
+### Contact
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/contact` | Public | Submit a contact form message; stored against the academy contact record |
 
 ### Utility
 
@@ -286,7 +329,7 @@ All API routes are under `/api/`. Authenticated routes require a valid session c
 SportSync/
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx                        # Landing page (glassmorphic hero, role portals)
+│   │   ├── page.tsx                        # Landing page (glassmorphic hero, role portals, dynamic contact)
 │   │   ├── globals.css                     # Design tokens, glass utilities, animations
 │   │   ├── (auth)/
 │   │   │   ├── login/page.tsx              # Unified login for all roles
@@ -296,28 +339,40 @@ SportSync/
 │   │   │   ├── players/page.tsx            # Player management + approval queue
 │   │   │   ├── sessions/page.tsx           # Session management + attendance marking
 │   │   │   ├── matches/page.tsx            # Match scorecard entry + broadcast view
-│   │   │   └── readiness/page.tsx          # Trial readiness overview table
+│   │   │   ├── readiness/page.tsx          # Trial readiness overview table
+│   │   │   ├── calendar/page.tsx           # Training & Match Calendar (Month/Week/Day/List views)
+│   │   │   └── profile/page.tsx            # Coach profile editor; syncs to landing page contact
 │   │   ├── (player)/player/
-│   │   │   └── page.tsx                    # Player self-service portal
+│   │   │   ├── page.tsx                    # Trial Readiness & Overview
+│   │   │   ├── calendar/page.tsx           # Upcoming Schedule & Calendar (read-only)
+│   │   │   ├── sessions/page.tsx           # Practice Attendance Log
+│   │   │   └── matches/page.tsx            # Match Performances & Score Ledger
 │   │   ├── (scout)/scout/
 │   │   │   └── page.tsx                    # Scout talent discovery registry
 │   │   └── api/
 │   │       ├── auth/                       # register, login, logout, me
-│   │       ├── coach/                      # overview, registrations
+│   │       ├── coach/                      # overview, registrations, profile
 │   │       ├── players/                    # CRUD + archive
 │   │       ├── sessions/                   # CRUD + attendance + close
 │   │       ├── matches/                    # CRUD + scorecard
 │   │       ├── readiness/                  # Readiness table
+│   │       ├── activities/                 # Calendar CRUD + cancel endpoint
 │   │       ├── player/                     # Player self-data
 │   │       ├── scout/                      # Ready-only talent endpoints
+│   │       ├── contact/                    # Public contact form submission
 │   │       ├── sports/                     # Sport config list
 │   │       └── health/                     # Health check
+│   ├── components/
+│   │   └── layout/
+│   │       ├── landing-navbar.tsx          # Responsive landing navbar with mobile hamburger
+│   │       └── player-navbar.tsx           # Shared player tab navbar with active route & mobile drawer
 │   ├── models/
 │   │   ├── User.ts                         # IUser — id, email, passwordHash, role
 │   │   ├── Player.ts                       # IPlayer — name, age, sport, skill, registrationStatus
 │   │   ├── Session.ts                      # ISession — date, sport, roster, status (open/closed)
 │   │   ├── Match.ts                        # IMatch — date, sport, opponent, participants, stats
-│   │   └── SportConfig.ts                  # ISportConfig — sport, scoreMetric, scoreUnit
+│   │   ├── SportConfig.ts                  # ISportConfig — sport, scoreMetric, scoreUnit
+│   │   └── Activity.ts                     # IActivity — type, status, date, time, endTime, venue, opponent, notes, sessionId, matchId, createdBy, cancelledAt, cancelReason
 │   ├── lib/
 │   │   ├── auth/
 │   │   │   └── session.ts                  # requireRole(), requireUser(), JWT helpers
@@ -327,17 +382,22 @@ SportSync/
 │   │   │   └── mongoose.ts                 # Singleton MongoDB connection
 │   │   ├── services/
 │   │   │   ├── readiness.ts                # calculatePlayerReadiness(), evaluateReadiness()
-│   │   │   └── sport-config.ts             # getSportScoreConfig() — server-side only
+│   │   │   ├── sport-config.ts             # getSportScoreConfig() — server-side only
+│   │   │   └── contact.ts                  # getAcademyContact() — reads coach profile for landing page
 │   │   └── validation/
 │   │       ├── auth.ts                     # registerPlayerSchema, loginSchema
 │   │       ├── player.ts                   # createPlayerSchema, updatePlayerSchema
 │   │       ├── session.ts                  # createSessionSchema, attendanceSchema
-│   │       └── match.ts                    # createMatchSchema, matchParticipantInputSchema
+│   │       ├── match.ts                    # createMatchSchema, matchParticipantInputSchema
+│   │       └── activity.ts                 # createActivitySchema, updateActivitySchema, cancelActivitySchema
 │   └── middleware.ts                       # Route protection + role-based redirect
 ├── scripts/
 │   ├── test-player-management.ts           # 20 automated player management tests
 │   ├── test-matches.ts                     # 23 automated match + eligibility tests
-│   └── test-readiness.ts                   # 45 automated readiness engine tests
+│   ├── test-readiness.ts                   # 45 automated readiness engine tests
+│   ├── test-attendance.ts                  # 18 automated attendance workflow tests
+│   ├── test-calendar.ts                    # 36 automated calendar module tests
+│   └── test-acceptance.ts                  # 48 Phase 8 acceptance & security tests
 ├── public/                                 # Static assets
 ├── .env.local                              # Environment secrets (not committed)
 ├── next.config.ts                          # Next.js configuration
@@ -350,13 +410,16 @@ SportSync/
 
 ## 🧪 Testing
 
-SportSync includes three automated test suites that run against a live MongoDB instance and exercise the full API layer end-to-end.
+SportSync includes six automated test suites that run against a live MongoDB instance and exercise the full API layer end-to-end.
 
 ```bash
 # Run all test suites individually
 pnpm test:players     # Player management, registration flow, approval/rejection
 pnpm test:matches     # Match creation, eligibility enforcement, score validation
 pnpm test:readiness   # Readiness engine: edge cases, threshold boundary, dual-condition
+pnpm test:attendance  # Attendance workflow: session creation, marking, locking
+pnpm test:calendar    # Calendar module: CRUD, permissions, duplicate prevention, cancellation
+pnpm test:acceptance  # Phase 8: acceptance scenarios, security, role boundary enforcement
 ```
 
 ### Test Coverage
@@ -366,38 +429,53 @@ pnpm test:readiness   # Readiness engine: edge cases, threshold boundary, dual-c
 | `test:players` | **20 tests** | Player CRUD, coach creation vs. self-registration, archive, skill assignment, approval queue |
 | `test:matches` | **23 tests** | Match creation, participant eligibility (absent player rejection), score validation, sport-specific stat derivation, finalization |
 | `test:readiness` | **45 tests** | Below 75% threshold, exactly 75% boundary, above 75%, fewer than 2 matches, exactly 2 matches, zero-session baseline, real-time revocation |
+| `test:attendance` | **18 tests** | Session creation, attendance marking, immutable lock enforcement, closed-session rejection |
+| `test:calendar` | **36 tests** | Activity creation (TRAINING & MATCH types), edit, cancel with reason, duplicate slot rejection, player RBAC (403 on mutations), status auto-resolution |
+| `test:acceptance` | **48 tests** | Four acceptance scenarios end-to-end: three-player attendance, absent player match rejection, 75% readiness boundary, scout sees only READY players |
 
 > All test suites must pass before merging to `main`. Run `pnpm typecheck && pnpm lint` to verify TypeScript and ESLint compliance as well.
 
 ### Key Test Scenarios
 
-**Three-Player Attendance Scenario** (`test:players`):
+**Three-Player Attendance Scenario** (`test:players`, `test:acceptance`):
 - Player A: PRESENT → counted in attendance ratio numerator
 - Player B: PRESENT → counted
 - Player C: ABSENT → present in roster but not in numerator; session locked, record immutable
 
-**Eligibility Rejection** (`test:matches`):
+**Eligibility Rejection** (`test:matches`, `test:acceptance`):
 - An absent player's ID submitted as a match participant → `400 Bad Request` with rejection reason
 
-**Readiness Boundary** (`test:readiness`):
+**Readiness Boundary** (`test:readiness`, `test:acceptance`):
 - 3/4 sessions present = `0.75` exactly → `READY: true` (threshold is `≥ 0.75`)
 - 2/3 sessions present = `0.666...` → `READY: false`
 - 1 finalized match only → `READY: false` even with 100% attendance
+
+**Scout Access Control** (`test:acceptance`):
+- `GET /api/scout/ready-players` returns only players with `isReady: true`
+- Directly requesting a non-ready player by ID returns `404` from the scout endpoint
+
+**Calendar RBAC** (`test:calendar`):
+- Player token: `GET /api/activities` → `200 OK`
+- Player token: `POST /api/activities` → `403 Forbidden`
+- Player token: `POST /api/activities/[id]/cancel` → `403 Forbidden`
 
 ---
 
 ## 📜 Scripts Reference
 
 ```bash
-pnpm dev            # Start development server with Turbopack (http://localhost:3000)
-pnpm build          # Production build — compiles all 29 routes
-pnpm start          # Start production server (requires pnpm build first)
-pnpm typecheck      # TypeScript check with no emit (tsc --noEmit)
-pnpm lint           # ESLint check across all source files
-pnpm format         # Prettier auto-format (writes in place)
-pnpm test:players   # Run player management test suite
-pnpm test:matches   # Run match and eligibility test suite
-pnpm test:readiness # Run readiness engine test suite
+pnpm dev              # Start development server with Turbopack (http://localhost:3000)
+pnpm build            # Production build — compiles all 36 routes
+pnpm start            # Start production server (requires pnpm build first)
+pnpm typecheck        # TypeScript check with no emit (tsc --noEmit)
+pnpm lint             # ESLint check across all source files
+pnpm format           # Prettier auto-format (writes in place)
+pnpm test:players     # Run player management test suite (20 tests)
+pnpm test:matches     # Run match and eligibility test suite (23 tests)
+pnpm test:readiness   # Run readiness engine test suite (45 tests)
+pnpm test:attendance  # Run attendance workflow test suite (18 tests)
+pnpm test:calendar    # Run calendar module test suite (36 tests)
+pnpm test:acceptance  # Run Phase 8 acceptance & security test suite (48 tests)
 ```
 
 ---
@@ -412,7 +490,7 @@ SportSync uses a **glassmorphic design language** implemented via custom Tailwin
 | `.glass-card` | Secondary card surface with lighter opacity, used for list items |
 | `.glass-dark` | Dark-tinted glass surface for modals and overlays |
 
-Animations include entrance transitions, shimmer loading states, and smooth status badge transitions. The design is fully responsive across mobile, tablet, and desktop viewports.
+Animations include entrance transitions, shimmer loading states, and smooth status badge transitions. The design is fully responsive across mobile, tablet, and desktop viewports. Both the landing page and player portal use dedicated responsive navbar components with mobile hamburger drawers.
 
 ---
 
@@ -430,6 +508,8 @@ Animations include entrance transitions, shimmer loading states, and smooth stat
 - All POST/PATCH bodies must be validated with a Zod schema before use
 - Score metrics and units must always be derived server-side from `SportConfig`; never accept them from the client
 - Session closure is irreversible by design — do not add any endpoint that modifies attendance after close
+- Calendar activities must be validated for duplicate time slots server-side before insertion
+- Contact details on the landing page must always come from `getAcademyContact()` — never hardcoded
 
 ---
 
