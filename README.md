@@ -16,6 +16,12 @@
 </div>
 
 > 🌐 **Live App**: [https://vc2-vibesync.vercel.app/](https://vc2-vibesync.vercel.app/)
+>
+> coach email : coach@dumkasports.org
+> coach password : coach@dumka123
+>
+> scout email : scout@dumkasports.org
+> scout password : scout@sport123
 
 ---
 
