@@ -41,7 +41,7 @@ The system is built around three distinct role portals — **Coach**, **Player**
 - **Practice Session Management** — Create sessions by date and sport, mark each eligible player PRESENT or ABSENT, then lock sessions permanently
 - **Immutable Attendance Locks** — Once a session is closed, attendance records cannot be modified through any UI action or direct API call
 - **Match Scorecard Recording** — Create match records linked to closed practice sessions; only players marked PRESENT in the linked session may be added
-- **Sport-Specific Statistics** — Cricket: runs & wickets per player role; Football: goals & assists; Basketball: points, rebounds & assists; Athletics & Badminton supported
+- **Sport-Specific Statistics** — Cricket: runs & wickets per player role; Football: goals & assists; Athletics & Badminton supported
 - **Trial Readiness Overview** — See every player's live readiness status (attendance %, matches played, READY / NOT READY) in a single dashboard view
 - **Dashboard Overview** — Aggregated stats: total players, pending registrations, open sessions, upcoming matches
 - **Training & Match Calendar** — Full calendar module with Month / Week / Day / List views; create, edit and cancel training sessions and match fixtures with duplicate-prevention checks; link sessions and matches to existing attendance/match modules; cancellation requires a reason
@@ -151,7 +151,6 @@ The system is built around three distinct role portals — **Coach**, **Player**
 |---|---|---|
 | **Football** | Forward/Striker, Midfielder, Defender, Goalkeeper | Goals, Assists |
 | **Cricket** | Batsman, Bowler, All-Rounder, Wicketkeeper | Runs, Wickets |
-| **Basketball** | Point Guard, Shooting Guard, Small Forward, Power Forward, Center | Points, Rebounds, Assists |
 | **Athletics** | Sprinter, Middle Distance, Long Distance, Jumper, Thrower | Time, Distance |
 | **Badminton** | Singles, Doubles, Mixed Doubles, All-Rounder | Sets Won, Points |
 

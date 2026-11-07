@@ -68,7 +68,6 @@ const AVAILABLE_SPORTS = [
   { id: "all", label: "All Sports" },
   { id: "football", label: "Football" },
   { id: "cricket", label: "Cricket" },
-  { id: "basketball", label: "Basketball" },
   { id: "athletics", label: "Athletics" },
   { id: "badminton", label: "Badminton" },
 ];

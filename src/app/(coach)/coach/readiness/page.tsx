@@ -252,7 +252,6 @@ export default function CoachReadinessPage() {
                   <option value="">All Sports</option>
                   <option value="football">Football</option>
                   <option value="cricket">Cricket</option>
-                  <option value="basketball">Basketball</option>
                   <option value="athletics">Athletics</option>
                   <option value="badminton">Badminton</option>
                 </select>
