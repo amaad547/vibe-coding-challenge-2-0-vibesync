@@ -9,8 +9,9 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/atlas)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v3-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 [![Zod](https://img.shields.io/badge/Zod-Validation-3E67B1?style=for-the-badge)](https://zod.dev/)
+[![Dark Mode](https://img.shields.io/badge/Theme-Light%20%7C%20Dark-6366F1?style=for-the-badge&logo=halfmoon)](https://vc2-vibesync.vercel.app/)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-vc2--vibesync.vercel.app-brightgreen?style=for-the-badge&logo=vercel)](https://vc2-vibesync.vercel.app/)
 
 </div>
@@ -69,6 +70,16 @@ The system is built around three distinct role portals — **Coach**, **Player**
 - **Dynamic Contact Section** — Phone, office phone, address, office hours and emergency contact are read live from the coach's profile — no hardcoding needed
 - **Role Portals Showcase** — Visual entry points to Coach, Player and Scout portals
 
+### 🌙 Global Light / Dark Theme
+
+- **Instant Toggle** — Single-click button in every navbar switches between Light and Dark mode; no dropdowns, no delays
+- **Three Brand Color Palettes** — Light (`#F8FAFC` background, `#0B1736` text, `#1769FF` accent) and Dark (`#0B1120` background, `#F8FAFC` text, `#4B8BFF` accent) with full surface, border, and muted token coverage
+- **Persistent** — Theme selection saved in `localStorage` and restored on every page load, navigation, and after logout/login
+- **Anti-FOUC** — Synchronous inline `<ThemeScript />` in `<head>` reads `localStorage` before first paint — zero flash of wrong theme
+- **Accessible** — Respects `prefers-reduced-motion`; full keyboard focus, `aria-label`, and smooth transitions on color and border properties
+- **Universal Coverage** — Toggle present in Landing Navbar, Coach Topbar, Player Navbar, Scout Header, and Auth Pages (Login & Register)
+- **Demo Credentials Autofill** — Login page displays clickable credential cards for Coach and Scout demo accounts that autofill both fields on click
+
 ---
 
 ## 🏛️ Business & Integrity Rules
@@ -98,10 +109,11 @@ The system is built around three distinct role portals — **Coach**, **Player**
 | **Framework** | [Next.js 15.5](https://nextjs.org/) — App Router, Server Components, Server Actions |
 | **Language** | [TypeScript 5.x](https://www.typescriptlang.org/) — strict mode, full type coverage |
 | **Database** | [MongoDB Atlas](https://www.mongodb.com/atlas) via [Mongoose 8](https://mongoosejs.com/) ODM |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) with custom glassmorphic design system |
+| **Styling** | [Tailwind CSS v3](https://tailwindcss.com/) with custom glassmorphic design system + Light/Dark CSS tokens |
 | **Validation** | [Zod](https://zod.dev/) — server-side schema validation on all API inputs |
 | **Authentication** | JWT tokens stored in `httpOnly` cookies; `iron-session`-style session management |
 | **Route Protection** | Next.js `middleware.ts` with role-based redirect logic |
+| **Theming** | Native `ThemeProvider` + `ThemeScript` (zero dependencies, anti-FOUC, `localStorage` persistence) |
 
 ---
 
@@ -355,9 +367,10 @@ SportSync/
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx                        # Landing page (glassmorphic hero, role portals, dynamic contact)
-│   │   ├── globals.css                     # Design tokens, glass utilities, animations
+│   │   ├── globals.css                     # Design tokens, glass utilities, light/dark CSS variables, animations
+│   │   ├── layout.tsx                      # Root layout — ThemeScript (anti-FOUC) + ThemeProvider
 │   │   ├── (auth)/
-│   │   │   ├── login/page.tsx              # Unified login for all roles
+│   │   │   ├── login/page.tsx              # Unified login for all roles + demo credential autofill cards
 │   │   │   └── register/page.tsx           # Athlete self-registration with skill selection
 │   │   ├── (coach)/coach/
 │   │   │   ├── page.tsx                    # Coach dashboard overview
@@ -388,9 +401,22 @@ SportSync/
 │   │       ├── sports/                     # Sport config list
 │   │       └── health/                     # Health check
 │   ├── components/
-│   │   └── layout/
-│   │       ├── landing-navbar.tsx          # Responsive landing navbar with mobile hamburger
-│   │       └── player-navbar.tsx           # Shared player tab navbar with active route & mobile drawer
+│   │   ├── theme/
+│   │   │   ├── theme-provider.tsx          # ThemeProvider context + ThemeScript (anti-FOUC) + useTheme hook
+│   │   │   └── theme-toggle.tsx            # One-click Light/Dark toggle button (Sun/Moon icon)
+│   │   ├── layout/
+│   │   │   ├── landing-navbar.tsx          # Responsive landing navbar with mobile hamburger + ThemeToggle
+│   │   │   ├── player-navbar.tsx           # Shared player tab navbar with active route & mobile drawer + ThemeToggle
+│   │   │   ├── topbar.tsx                  # Coach/Scout topbar with ThemeToggle
+│   │   │   ├── sidebar.tsx                 # Coach sidebar with dark mode styling
+│   │   │   └── app-shell.tsx               # Layout shell: Sidebar + Topbar
+│   │   └── ui/
+│   │       ├── button.tsx                  # Button component with dark mode variants
+│   │       ├── card.tsx                    # Card + CardHeader/Title/Description/Content with dark mode
+│   │       ├── badge.tsx                   # Badge variants (primary/success/warning/danger/info/neutral) with dark mode
+│   │       ├── input.tsx                   # Input with dark background, border, placeholder styling
+│   │       ├── modal.tsx                   # Modal dialog with dark backdrop and surface
+│   │       └── table.tsx                   # Table with dark header, row, and border styling
 │   ├── models/
 │   │   ├── User.ts                         # IUser — id, email, passwordHash, role
 │   │   ├── Player.ts                       # IPlayer — name, age, sport, skill, registrationStatus
@@ -425,8 +451,9 @@ SportSync/
 │   └── test-acceptance.ts                  # 48 Phase 8 acceptance & security tests
 ├── public/                                 # Static assets
 ├── .env.local                              # Environment secrets (not committed)
+├── .gitignore                              # Includes /Rules/, .env*.local, .next/, node_modules/
 ├── next.config.ts                          # Next.js configuration
-├── tailwind.config.ts                      # Tailwind CSS configuration
+├── tailwind.config.ts                      # Tailwind CSS configuration with darkMode: "class"
 ├── tsconfig.json                           # TypeScript configuration (strict mode)
 └── package.json                            # Dependencies and scripts
 ```
@@ -514,6 +541,19 @@ SportSync uses a **glassmorphic design language** implemented via custom Tailwin
 | `.glass-panel` | Primary container with frosted-glass backdrop blur and translucent background |
 | `.glass-card` | Secondary card surface with lighter opacity, used for list items |
 | `.glass-dark` | Dark-tinted glass surface for modals and overlays |
+
+### Light / Dark Theme Tokens
+
+The theme system uses CSS variables mapped to Tailwind tokens via `darkMode: "class"` in `tailwind.config.ts`. Switching the `.dark` class on `<html>` instantly re-maps all surfaces and typography.
+
+| Token | Light | Dark |
+|---|---|---|
+| `--background` | `#F8FAFC` | `#0B1120` |
+| `--surface` | `#FFFFFF` | `#111C30` |
+| `--foreground` | `#0B1736` | `#F8FAFC` |
+| `--muted-foreground` | `#64748B` | `#94A3B8` |
+| `--brand-primary` | `#1769FF` | `#4B8BFF` |
+| `--border` | `#E2E8F0` | `#26344B` |
 
 Animations include entrance transitions, shimmer loading states, and smooth status badge transitions. The design is fully responsive across mobile, tablet, and desktop viewports. Both the landing page and player portal use dedicated responsive navbar components with mobile hamburger drawers.
 
