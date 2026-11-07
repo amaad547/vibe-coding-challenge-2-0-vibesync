@@ -113,7 +113,7 @@ export default function PlayerMatchesPage() {
   const matches = data?.matches || [];
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
+    <div className="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-[#0B1120] text-brand-navy dark:text-[#F8FAFC]">
       <PlayerNavbar
         player={player}
         isReady={ready?.isReady}

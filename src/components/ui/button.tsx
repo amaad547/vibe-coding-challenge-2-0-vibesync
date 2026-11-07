@@ -30,13 +30,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary:
-        "bg-brand-primary text-white hover:bg-brand-primaryHover shadow-sm active:bg-brand-primaryHover",
+        "bg-brand-primary text-white hover:bg-brand-primaryHover shadow-xs active:bg-brand-primaryHover",
       secondary:
-        "bg-brand-navy text-white hover:bg-brand-navyLight shadow-sm active:bg-brand-navyLight",
+        "bg-brand-navy dark:bg-[#1e2d48] text-white hover:bg-brand-navyLight dark:hover:bg-[#263859] shadow-xs active:bg-brand-navyLight",
       outline:
-        "border border-slate-300 bg-white text-brand-navy hover:bg-slate-50 shadow-sm active:bg-slate-100",
-      ghost: "text-slate-700 hover:bg-slate-100 hover:text-brand-navy active:bg-slate-200",
-      danger: "bg-rose-600 text-white hover:bg-rose-700 shadow-sm active:bg-rose-800",
+        "border border-slate-300 dark:border-[#26344B] bg-white dark:bg-[#111C30] text-brand-navy dark:text-[#F8FAFC] hover:bg-slate-50 dark:hover:bg-[#0B1120] shadow-xs active:bg-slate-100",
+      ghost:
+        "text-slate-700 dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#111C30] hover:text-brand-navy dark:hover:text-[#F8FAFC] active:bg-slate-200 dark:active:bg-[#0B1120]",
+      danger: "bg-rose-600 text-white hover:bg-rose-700 shadow-xs active:bg-rose-800",
     };
 
     const sizeStyles = {

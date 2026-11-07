@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { LogIn, AlertCircle, Clock, ShieldX, UserPlus, Mail, Lock } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 function LoginForm() {
   const router = useRouter();
@@ -83,15 +84,15 @@ function LoginForm() {
       <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-blue-500/10 blur-xl opacity-75 pointer-events-none" />
 
       {/* Main Login Card */}
-      <div className="relative rounded-2xl border border-slate-200/90 bg-white/95 p-8 shadow-xl backdrop-blur-sm">
+      <div className="relative rounded-2xl border border-slate-200/90 dark:border-[#26344B] bg-white/95 dark:bg-[#111C30]/95 p-8 shadow-xl backdrop-blur-sm">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 text-brand-primary mb-3 shadow-inner">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-brand-primary dark:text-[#4B8BFF] mb-3 shadow-inner">
             <LogIn className="w-6 h-6" />
           </div>
           <h1 className="text-2xl font-black tracking-tight text-brand-navy">
             Sign In to SportSync
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-[#94A3B8] mt-1">
             Access your coach desk, player portal, or scouting registry
           </p>
         </div>
@@ -142,17 +143,17 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                className="flex h-11 w-full rounded-xl border border-slate-300 bg-white/90 pl-10 pr-3 py-2 text-sm text-brand-navy shadow-2xs transition-all placeholder:text-slate-400 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-3 focus:ring-brand-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-11 w-full rounded-xl border border-slate-300 dark:border-[#26344B] bg-white/90 dark:bg-[#0B1120]/90 pl-10 pr-3 py-2 text-sm text-brand-navy dark:text-[#F8FAFC] shadow-2xs transition-all placeholder:text-slate-400 dark:placeholder:text-[#94A3B8]/60 focus:border-brand-primary dark:focus:border-[#4B8BFF] focus:bg-white dark:focus:bg-[#0B1120] focus:outline-hidden focus:ring-3 focus:ring-brand-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
           </div>
 
           <div className="space-y-1.5 text-left">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-[#94A3B8]">
               Password
             </label>
             <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-[#94A3B8]">
                 <Lock className="h-4 w-4" />
               </div>
               <input
@@ -162,7 +163,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="flex h-11 w-full rounded-xl border border-slate-300 bg-white/90 pl-10 pr-3 py-2 text-sm text-brand-navy shadow-2xs transition-all placeholder:text-slate-400 focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-3 focus:ring-brand-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-11 w-full rounded-xl border border-slate-300 dark:border-[#26344B] bg-white/90 dark:bg-[#0B1120]/90 pl-10 pr-3 py-2 text-sm text-brand-navy dark:text-[#F8FAFC] shadow-2xs transition-all placeholder:text-slate-400 dark:placeholder:text-[#94A3B8]/60 focus:border-brand-primary dark:focus:border-[#4B8BFF] focus:bg-white dark:focus:bg-[#0B1120] focus:outline-hidden focus:ring-3 focus:ring-brand-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
           </div>
@@ -211,20 +212,23 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="relative min-h-screen flex flex-col justify-between bg-slate-50 p-4 sm:p-8 overflow-hidden">
+    <div className="relative min-h-screen flex flex-col justify-between bg-brand-surface p-4 sm:p-8 overflow-hidden transition-colors">
       {/* Ambient background decoration */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
       {/* Top Header */}
       <header className="flex justify-between items-center max-w-5xl mx-auto w-full z-10">
         <SportSyncLogo size="md" href="/" />
-        <Link
-          href="/register"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-brand-primary shadow-2xs hover:bg-blue-50 transition-colors"
-        >
-          <UserPlus className="w-3.5 h-3.5" />
-          <span>New Player Registration</span>
-        </Link>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle align="right" />
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] text-xs font-bold text-brand-primary dark:text-[#4B8BFF] shadow-2xs hover:bg-blue-50 dark:hover:bg-[#0B1120] transition-colors"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>New Player Registration</span>
+          </Link>
+        </div>
       </header>
 
       {/* Main Content */}

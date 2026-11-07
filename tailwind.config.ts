@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,14 +11,16 @@ const config: Config = {
     extend: {
       colors: {
         background: "var(--background)",
+        surface: "var(--surface)",
         foreground: "var(--foreground)",
+        border: "var(--border)",
         brand: {
-          primary: "#1769FF", // Electric Blue
-          primaryHover: "#0E52D6",
-          navy: "#0B1736",    // Dark Navy
-          navyLight: "#132147",
-          surface: "#F8FAFC", // Very light blue-grey
-          muted: "#64748B",
+          primary: "var(--brand-primary, #1769FF)",
+          primaryHover: "var(--brand-primary-hover, #0E52D6)",
+          navy: "var(--brand-navy, #0B1736)",
+          navyLight: "var(--brand-navy-light, #132147)",
+          surface: "var(--brand-surface, #F8FAFC)",
+          muted: "var(--brand-muted, #64748B)",
         },
       },
     },

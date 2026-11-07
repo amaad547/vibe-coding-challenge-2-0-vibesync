@@ -135,7 +135,7 @@ export default function PlayerPortalPage() {
   const matches = data?.matches || [];
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
+    <div className="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-[#0B1120] text-brand-navy dark:text-[#F8FAFC]">
       {/* Top Navbar */}
       <PlayerNavbar
         player={player}
@@ -148,14 +148,14 @@ export default function PlayerPortalPage() {
       {/* Main Body */}
       <main className="max-w-5xl mx-auto w-full p-4 sm:p-8 space-y-6 flex-1">
         {error && (
-          <div className="rounded-xl bg-rose-50 border border-rose-200 p-4 text-xs font-medium text-rose-700 flex items-center gap-2.5 shadow-2xs">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
+          <div className="rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 p-4 text-xs font-medium text-rose-700 dark:text-rose-400 flex items-center gap-2.5 shadow-2xs">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" />
             <span>{error}</span>
           </div>
         )}
 
         {/* Athlete Profile Banner */}
-        <div className="relative rounded-2xl border border-blue-200/80 bg-gradient-to-r from-blue-50/90 via-white to-indigo-50/70 p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 overflow-hidden">
+        <div className="relative rounded-2xl border border-blue-200/80 dark:border-blue-900/60 bg-gradient-to-r from-blue-50/90 via-white to-indigo-50/70 dark:from-[#111C30] dark:via-[#111C30]/90 dark:to-indigo-950/30 p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 overflow-hidden">
           <div className="flex items-center gap-4 sm:gap-5">
             <div className="relative h-16 w-16 sm:h-18 sm:w-18 rounded-2xl bg-gradient-to-tr from-brand-primary to-indigo-600 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-md ring-4 ring-white">
               {player?.name?.charAt(0) || "A"}
@@ -214,17 +214,17 @@ export default function PlayerPortalPage() {
 
         {/* Readiness High-Impact Callout Banner */}
         {ready?.isReady ? (
-          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-emerald-100/40 to-teal-50 p-5 shadow-xs flex items-center justify-between gap-4">
+          <div className="rounded-2xl border border-emerald-200 dark:border-emerald-900/60 bg-gradient-to-r from-emerald-50 via-emerald-100/40 to-teal-50 dark:from-emerald-950/40 dark:via-[#111C30] dark:to-teal-950/30 p-5 shadow-xs flex items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
               <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
                 <Trophy className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-black text-emerald-950 flex items-center gap-1.5">
-                  <CheckCircle2Icon className="w-4 h-4 text-emerald-600" /> TRIAL READY &bull; PROFILE
+                <p className="text-sm font-black text-emerald-950 dark:text-emerald-300 flex items-center gap-1.5">
+                  <CheckCircle2Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> TRIAL READY &bull; PROFILE
                   ACTIVE FOR SCOUTS
                 </p>
-                <p className="text-xs text-emerald-800 mt-0.5">
+                <p className="text-xs text-emerald-800 dark:text-emerald-400/90 mt-0.5">
                   You satisfy the Dumka Academy dual readiness conditions (≥75% attendance + ≥2
                   matches). Professional talent scouts can view your performance dossier.
                 </p>
@@ -237,20 +237,20 @@ export default function PlayerPortalPage() {
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-amber-100/30 to-orange-50 p-5 shadow-xs flex items-center justify-between gap-4">
+          <div className="rounded-2xl border border-amber-200 dark:border-amber-900/60 bg-gradient-to-r from-amber-50 via-amber-100/30 to-orange-50 dark:from-amber-950/40 dark:via-[#111C30] dark:to-orange-950/30 p-5 shadow-xs flex items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
               <div className="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
                 <TrendingUp className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-black text-amber-950 flex items-center gap-1.5">
-                  <Activity className="w-4 h-4 text-amber-600" /> TRIAL READINESS IN PROGRESS
+                <p className="text-sm font-black text-amber-950 dark:text-amber-300 flex items-center gap-1.5">
+                  <Activity className="w-4 h-4 text-amber-600 dark:text-amber-400" /> TRIAL READINESS IN PROGRESS
                 </p>
-                <p className="text-xs text-amber-800 mt-0.5">{ready?.reason}</p>
+                <p className="text-xs text-amber-800 dark:text-amber-400/90 mt-0.5">{ready?.reason}</p>
               </div>
             </div>
             <div className="hidden md:block">
-              <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 border border-amber-300 text-xs font-black">
+              <span className="px-3 py-1.5 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 text-xs font-black">
                 {ready?.isAttendanceEligible ? "1/2 MET" : "0/2 MET"}
               </span>
             </div>

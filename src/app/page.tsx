@@ -25,12 +25,12 @@ export default async function HomePage() {
   const contact = await getAcademyContact();
 
   return (
-    <main className="relative min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
+    <main className="relative min-h-screen flex flex-col justify-between bg-brand-surface text-brand-navy transition-colors">
       {/* Ambient background glow orbs for landing page only */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-24 left-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse-subtle" />
-        <div className="absolute -top-20 right-1/4 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl animate-pulse-subtle" />
-        <div className="absolute top-48 left-1/2 -translate-x-1/2 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl" />
+        <div className="absolute -top-24 left-1/4 w-96 h-96 bg-blue-400/20 dark:bg-blue-600/10 rounded-full blur-3xl animate-pulse-subtle" />
+        <div className="absolute -top-20 right-1/4 w-96 h-96 bg-indigo-400/20 dark:bg-indigo-600/10 rounded-full blur-3xl animate-pulse-subtle" />
+        <div className="absolute top-48 left-1/2 -translate-x-1/2 w-80 h-80 bg-emerald-400/10 dark:bg-emerald-600/10 rounded-full blur-3xl" />
       </div>
 
       {/* Navigation Header with Frosted Glass - Sticky Responsive Navbar */}
@@ -39,7 +39,7 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 sm:pt-20 sm:pb-24 text-center">
         {/* Animated Academy Pill Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card border border-blue-200/80 text-brand-primary text-xs font-bold uppercase tracking-wider mb-8 shadow-xs animate-float-slow">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card border border-blue-200/80 dark:border-blue-900/60 text-brand-primary dark:text-[#4B8BFF] text-xs font-bold uppercase tracking-wider mb-8 shadow-xs animate-float-slow">
           <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-ping" />
           <Activity className="w-3.5 h-3.5" />
           <span>Dumka Sports Academy Management Desk</span>
@@ -47,13 +47,13 @@ export default async function HomePage() {
 
         <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-brand-navy max-w-4xl mx-auto leading-[1.12]">
           Your Academy.{" "}
-          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 dark:from-blue-400 dark:via-indigo-400 dark:to-blue-400 bg-clip-text text-transparent">
             Your Performance.
           </span>{" "}
           Your Future.
         </h1>
 
-        <p className="mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+        <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-[#94A3B8] max-w-2xl mx-auto font-normal leading-relaxed">
           The verified sports academy operating desk. Replace paper notebooks with cryptographically
           locked attendance sessions, verified match scorecards, and tamper-proof trial readiness
           for professional talent scouting.
@@ -63,15 +63,15 @@ export default async function HomePage() {
         <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-3.5">
           <Link
             href="/login"
-            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-brand-primary px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 hover:bg-brand-primaryHover hover:shadow-blue-500/40 transition-all duration-200 gap-2 hover:-translate-y-0.5"
+            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-brand-primary dark:bg-[#4B8BFF] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 hover:bg-brand-primaryHover dark:hover:bg-blue-600 hover:shadow-blue-500/40 transition-all duration-200 gap-2 hover:-translate-y-0.5"
           >
             Enter Dashboard Portal <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/register"
-            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl glass-card border border-slate-300/80 px-7 py-3.5 text-sm font-bold text-brand-navy hover:bg-white hover:border-slate-400 transition-all duration-200 shadow-xs gap-2 hover:-translate-y-0.5"
+            className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl glass-card border border-slate-300/80 dark:border-[#26344B] px-7 py-3.5 text-sm font-bold text-brand-navy hover:bg-white dark:hover:bg-[#111C30] hover:border-slate-400 dark:hover:border-slate-600 transition-all duration-200 shadow-xs gap-2 hover:-translate-y-0.5"
           >
-            <UserPlus className="w-4 h-4 text-brand-primary" />
+            <UserPlus className="w-4 h-4 text-brand-primary dark:text-[#4B8BFF]" />
             Athlete Registration Desk
           </Link>
         </div>
@@ -79,26 +79,26 @@ export default async function HomePage() {
 
       {/* Metrics / Guarantee Bar with Glass Styling */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-16 w-full">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-2xl glass-card border border-slate-200/80 shadow-md">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-2xl glass-card border border-slate-200/80 dark:border-[#26344B] shadow-md">
           <div className="text-center p-3">
-            <p className="text-2xl sm:text-3xl font-black text-brand-primary">≥ 75%</p>
-            <p className="text-xs font-semibold text-slate-600 mt-1">Attendance Threshold</p>
-            <p className="text-[11px] text-slate-400">Exact unrounded ratio</p>
+            <p className="text-2xl sm:text-3xl font-black text-brand-primary dark:text-[#4B8BFF]">≥ 75%</p>
+            <p className="text-xs font-semibold text-slate-600 dark:text-[#94A3B8] mt-1">Attendance Threshold</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Exact unrounded ratio</p>
           </div>
           <div className="text-center p-3">
-            <p className="text-2xl sm:text-3xl font-black text-indigo-600">≥ 2</p>
-            <p className="text-xs font-semibold text-slate-600 mt-1">Finalized Matches</p>
-            <p className="text-[11px] text-slate-400">Real performance fixtures</p>
+            <p className="text-2xl sm:text-3xl font-black text-indigo-600 dark:text-indigo-400">≥ 2</p>
+            <p className="text-xs font-semibold text-slate-600 dark:text-[#94A3B8] mt-1">Finalized Matches</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Real performance fixtures</p>
           </div>
           <div className="text-center p-3">
-            <p className="text-2xl sm:text-3xl font-black text-emerald-600">100%</p>
-            <p className="text-xs font-semibold text-slate-600 mt-1">Locked Attendance</p>
-            <p className="text-[11px] text-slate-400">Zero retroactive editing</p>
+            <p className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">100%</p>
+            <p className="text-xs font-semibold text-slate-600 dark:text-[#94A3B8] mt-1">Locked Attendance</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Zero retroactive editing</p>
           </div>
           <div className="text-center p-3">
-            <p className="text-2xl sm:text-3xl font-black text-amber-600">0 Bias</p>
-            <p className="text-xs font-semibold text-slate-600 mt-1">Objective Scouting</p>
-            <p className="text-[11px] text-slate-400">Strict server validation</p>
+            <p className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400">0 Bias</p>
+            <p className="text-xs font-semibold text-slate-600 dark:text-[#94A3B8] mt-1">Objective Scouting</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Strict server validation</p>
           </div>
         </div>
       </section>
@@ -109,7 +109,7 @@ export default async function HomePage() {
           <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">
             Built for Integrity in Sports Development
           </h2>
-          <p className="text-sm text-slate-600 mt-2">
+          <p className="text-sm text-slate-600 dark:text-[#94A3B8] mt-2">
             Every feature in SportSync is architected to eliminate manipulation and deliver
             verified, trustworthy performance records.
           </p>
@@ -117,12 +117,12 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Feature 1 */}
-          <div className="rounded-2xl glass-card p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 text-brand-primary flex items-center justify-center">
+          <div className="rounded-2xl glass-card p-6 border border-slate-200/80 dark:border-[#26344B] shadow-sm hover:shadow-md transition-all space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60 text-brand-primary dark:text-[#4B8BFF] flex items-center justify-center">
               <Lock className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-brand-navy">Immutable Attendance Locks</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
               When a coach closes a practice session, attendance is locked permanently. No
               retroactive tampering is permitted via UI or API. Only closed sessions count towards
               readiness.
@@ -130,26 +130,26 @@ export default async function HomePage() {
           </div>
 
           {/* Feature 2 */}
-          <div className="rounded-2xl glass-card p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center">
+          <div className="rounded-2xl glass-card p-6 border border-slate-200/80 dark:border-[#26344B] shadow-sm hover:shadow-md transition-all space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-900/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <Sparkles className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-brand-navy">Server-Enforced Readiness</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
               Readiness is derived on every request: athletes must satisfy both the unrounded ≥ 75%
               attendance ratio and have participated in ≥ 2 finalized matches.
             </p>
           </div>
 
           {/* Feature 3 */}
-          <div className="rounded-2xl glass-card p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+          <div className="rounded-2xl glass-card p-6 border border-slate-200/80 dark:border-[#26344B] shadow-sm hover:shadow-md transition-all space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-brand-navy">
               Instant Scout Privacy Revocation
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
               Scouts only ever see verified READY athletes. If an athlete drops below criteria,
               their dossier vanishes instantaneously from scout queries with strict server-side
               protection.
@@ -160,9 +160,9 @@ export default async function HomePage() {
 
       {/* 4-Stage Operational Pipeline */}
       <section id="pipeline" className="max-w-6xl mx-auto px-4 sm:px-6 py-12 w-full">
-        <div className="rounded-3xl glass-card border border-slate-200/90 p-8 sm:p-12 shadow-lg">
+        <div className="rounded-3xl glass-card border border-slate-200/90 dark:border-[#26344B] p-8 sm:p-12 shadow-lg">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-xs font-black uppercase tracking-wider text-brand-primary">
+            <span className="text-xs font-black uppercase tracking-wider text-brand-primary dark:text-[#4B8BFF]">
               Operational Pipeline
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-brand-navy mt-1">
@@ -172,48 +172,48 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
             {/* Step 1 */}
-            <div className="relative p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-100 text-brand-primary text-xs font-black flex items-center justify-center">
+            <div className="relative p-5 rounded-2xl bg-white dark:bg-[#111C30] border border-slate-200 dark:border-[#26344B] shadow-2xs space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-brand-primary dark:text-[#4B8BFF] text-xs font-black flex items-center justify-center">
                 01
               </div>
               <h4 className="text-sm font-bold text-brand-navy">Registration</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
                 Athlete submits details. Account enters pending verification queue for head coach
                 approval.
               </p>
             </div>
 
             {/* Step 2 */}
-            <div className="relative p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 text-xs font-black flex items-center justify-center">
+            <div className="relative p-5 rounded-2xl bg-white dark:bg-[#111C30] border border-slate-200 dark:border-[#26344B] shadow-2xs space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-black flex items-center justify-center">
                 02
               </div>
               <h4 className="text-sm font-bold text-brand-navy">Practice & Roll Call</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
                 Coach opens session, marks PRESENT/ABSENT, and locks session. Attendance percentages
                 update.
               </p>
             </div>
 
             {/* Step 3 */}
-            <div className="relative p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 text-xs font-black flex items-center justify-center">
+            <div className="relative p-5 rounded-2xl bg-white dark:bg-[#111C30] border border-slate-200 dark:border-[#26344B] shadow-2xs space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-xs font-black flex items-center justify-center">
                 03
               </div>
               <h4 className="text-sm font-bold text-brand-navy">Match Fixtures</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
                 Only athletes present in linked sessions are eligible. Scores recorded with
                 sport-specific units.
               </p>
             </div>
 
             {/* Step 4 */}
-            <div className="relative p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-black flex items-center justify-center">
+            <div className="relative p-5 rounded-2xl bg-white dark:bg-[#111C30] border border-slate-200 dark:border-[#26344B] shadow-2xs space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-xs font-black flex items-center justify-center">
                 04
               </div>
               <h4 className="text-sm font-bold text-brand-navy">Scout Discovery</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
                 When conditions are met (≥75% + 2 matches), the athlete is unlocked in the scout
                 dossier.
               </p>
@@ -228,46 +228,46 @@ export default async function HomePage() {
           <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">
             Choose Your Academy Portal
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-[#94A3B8] mt-1">
             SportSync provides role-tailored dashboards for coaches, athletes, and talent scouts.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Coach Card */}
-          <div className="group rounded-2xl glass-card border border-blue-200/80 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+          <div className="group rounded-2xl glass-card border border-blue-200/80 dark:border-[#26344B] p-6 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-brand-primary dark:text-[#4B8BFF] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                 <Users className="w-6 h-6" />
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-brand-primary">
+              <span className="text-[11px] font-black uppercase tracking-wider text-brand-primary dark:text-[#4B8BFF]">
                 Academy Coach
               </span>
               <h3 className="text-lg font-bold text-brand-navy mt-1 mb-2">Coach Desk</h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed mb-4">
                 Verify applicant registrations, create and lock practice sessions, record match
                 scorecards, and monitor academy readiness metrics.
               </p>
             </div>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-blue-50 hover:bg-brand-primary hover:text-white py-2.5 text-xs font-bold text-brand-primary transition-all duration-200"
+              className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-blue-50 dark:bg-blue-950/50 hover:bg-brand-primary dark:hover:bg-[#4B8BFF] hover:text-white py-2.5 text-xs font-bold text-brand-primary dark:text-[#4B8BFF] transition-all duration-200"
             >
               Sign In to Coach Desk <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {/* Player Card */}
-          <div className="group rounded-2xl glass-card border border-indigo-200/80 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+          <div className="group rounded-2xl glass-card border border-indigo-200/80 dark:border-[#26344B] p-6 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                 <Trophy className="w-6 h-6" />
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-indigo-600">
+              <span className="text-[11px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                 Academy Athlete
               </span>
               <h3 className="text-lg font-bold text-brand-navy mt-1 mb-2">Player Portal</h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed mb-4">
                 Track personal attendance %, view trial readiness qualification milestones, and
                 inspect verified match performance scorecards.
               </p>
@@ -275,13 +275,13 @@ export default async function HomePage() {
             <div className="space-y-2">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-indigo-50 hover:bg-indigo-600 hover:text-white py-2.5 text-xs font-bold text-indigo-600 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white py-2.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 transition-all duration-200"
               >
                 Sign In to Player Portal <ChevronRight className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl border border-indigo-200 py-2 text-[11px] font-bold text-indigo-700 hover:bg-indigo-50/50 transition-colors"
+                className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl border border-indigo-200 dark:border-indigo-900/60 py-2 text-[11px] font-bold text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/40 transition-colors"
               >
                 New Athlete? Register Here
               </Link>
@@ -289,23 +289,23 @@ export default async function HomePage() {
           </div>
 
           {/* Scout Card */}
-          <div className="group rounded-2xl glass-card border border-emerald-200/80 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+          <div className="group rounded-2xl glass-card border border-emerald-200/80 dark:border-[#26344B] p-6 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                 <ShieldCheck className="w-6 h-6" />
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-600">
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 Talent Scout
               </span>
               <h3 className="text-lg font-bold text-brand-navy mt-1 mb-2">Scout Registry</h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed mb-4">
                 Discover verified trial-ready talent meeting strict dual conditions (≥75% attendance
                 + ≥2 matches) with complete performance dossiers.
               </p>
             </div>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white py-2.5 text-xs font-bold text-emerald-600 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white py-2.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 transition-all duration-200"
             >
               <Eye className="w-3.5 h-3.5" />
               Sign In to Scout Registry <ChevronRight className="w-3.5 h-3.5" />
@@ -315,102 +315,102 @@ export default async function HomePage() {
       </section>
 
       {/* Contact Details & Operations Desk Section */}
-      <section id="contact" className="max-w-6xl mx-auto px-4 sm:px-6 py-14 w-full border-t border-slate-200/80">
+      <section id="contact" className="max-w-6xl mx-auto px-4 sm:px-6 py-14 w-full border-t border-slate-200/80 dark:border-[#26344B]">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-brand-primary text-xs font-bold uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-900/60 text-brand-primary dark:text-[#4B8BFF] text-xs font-bold uppercase tracking-wider mb-3">
             <Mail className="w-3.5 h-3.5" />
             <span>Official Academy Operations Desk</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-brand-navy">
             Contact Dumka Sports Academy
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-[#94A3B8] mt-1 max-w-xl mx-auto">
             Get in touch with coaching staff, tournament coordinators, and talent scout liaisons.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Location */}
-          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="rounded-2xl glass-card border border-slate-200/80 dark:border-[#26344B] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
             <div>
-              <div className="w-10 h-10 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-brand-primary dark:text-[#4B8BFF] flex items-center justify-center mb-3">
                 <MapPin className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Academy Ground</h3>
-              <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed whitespace-pre-line">
                 {contact.academyAddress}
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <span className="text-[11px] font-semibold text-brand-primary">District Sports Authority</span>
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#26344B]">
+              <span className="text-[11px] font-semibold text-brand-primary dark:text-[#4B8BFF]">District Sports Authority</span>
             </div>
           </div>
 
           {/* Direct Line */}
-          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="rounded-2xl glass-card border border-slate-200/80 dark:border-[#26344B] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
             <div>
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3">
                 <Phone className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Direct Helpline</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Helpline: <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="text-brand-navy font-semibold hover:text-brand-primary">{contact.phone}</a><br />
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
+                Helpline: <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="text-brand-navy font-semibold hover:text-brand-primary dark:hover:text-[#4B8BFF]">{contact.phone}</a><br />
                 {contact.officePhone && (
                   <>
-                    Office: <a href={`tel:${contact.officePhone.replace(/\s+/g, "")}`} className="text-brand-navy font-semibold hover:text-brand-primary">{contact.officePhone}</a><br />
+                    Office: <a href={`tel:${contact.officePhone.replace(/\s+/g, "")}`} className="text-brand-navy font-semibold hover:text-brand-primary dark:hover:text-[#4B8BFF]">{contact.officePhone}</a><br />
                   </>
                 )}
-                Emergency: <span className="font-semibold text-slate-700">{contact.emergencyContact}</span>
+                Emergency: <span className="font-semibold text-slate-700 dark:text-[#F8FAFC]">{contact.emergencyContact}</span>
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <span className="text-[11px] font-semibold text-emerald-600">Mon &ndash; Sat &bull; Active Desk</span>
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#26344B]">
+              <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Mon &ndash; Sat &bull; Active Desk</span>
             </div>
           </div>
 
           {/* Email */}
-          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="rounded-2xl glass-card border border-slate-200/80 dark:border-[#26344B] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
             <div>
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3">
                 <Mail className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Email Inquiries</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                General: <a href="mailto:desk@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary">desk@dumkasports.org</a><br />
-                Head Coach: <a href={`mailto:${contact.email}`} className="text-brand-navy font-semibold hover:text-brand-primary">{contact.email}</a><br />
-                Coach Name: <span className="font-semibold text-slate-700">{contact.coachName}</span>
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
+                General: <a href="mailto:desk@dumkasports.org" className="text-brand-navy font-semibold hover:text-brand-primary dark:hover:text-[#4B8BFF]">desk@dumkasports.org</a><br />
+                Head Coach: <a href={`mailto:${contact.email}`} className="text-brand-navy font-semibold hover:text-brand-primary dark:hover:text-[#4B8BFF]">{contact.email}</a><br />
+                Coach Name: <span className="font-semibold text-slate-700 dark:text-[#F8FAFC]">{contact.coachName}</span>
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <span className="text-[11px] font-semibold text-indigo-600">Average response &lt; 24h</span>
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#26344B]">
+              <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">Average response &lt; 24h</span>
             </div>
           </div>
 
           {/* Practice Hours */}
-          <div className="rounded-2xl glass-card border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="rounded-2xl glass-card border border-slate-200/80 dark:border-[#26344B] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
             <div>
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3">
                 <Clock className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-brand-navy mb-1">Practice Hours</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
                 Morning: <span className="font-semibold text-brand-navy">{contact.morningHours}</span><br />
                 Evening: <span className="font-semibold text-brand-navy">{contact.eveningHours}</span><br />
-                Sunday: <span className="font-semibold text-slate-700">Tournament Matches</span>
+                Sunday: <span className="font-semibold text-slate-700 dark:text-[#F8FAFC]">Tournament Matches</span>
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <span className="text-[11px] font-semibold text-amber-600">6 Days / Week Training</span>
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#26344B]">
+              <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">6 Days / Week Training</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200/80 bg-white/80 py-8">
+      <footer className="border-t border-slate-200/80 dark:border-[#26344B] bg-white/80 dark:bg-[#111C30]/80 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <SportSyncLogo size="sm" showTagline />
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-[#94A3B8]">
             &copy; {new Date().getFullYear()} SportSync &bull; Dumka Sports Academy Management Desk
           </p>
         </div>

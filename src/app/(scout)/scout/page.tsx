@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table";
 import { formatCalendarDate } from "@/lib/utils/date";
 import { formatSkillLabel } from "@/lib/constants/skills";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 interface ReadyAthleteSummary {
   id: string;
@@ -163,11 +164,12 @@ export default function ScoutRegistryPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-brand-navy">
+    <div className="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-[#0B1120] text-brand-navy dark:text-[#F8FAFC]">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/90 bg-white/95 px-4 sm:px-8 py-3.5 backdrop-blur-md flex justify-between items-center shadow-xs">
+      <header className="sticky top-0 z-30 border-b border-slate-200/90 dark:border-[#26344B] bg-white/95 dark:bg-[#111C30]/95 px-4 sm:px-8 py-3.5 backdrop-blur-md flex justify-between items-center shadow-xs">
         <SportSyncLogo size="sm" href="/scout" />
         <div className="flex items-center gap-3">
+          <ThemeToggle align="right" />
           <Badge variant="success" dot className="font-semibold text-xs">
             Talent Scout Registry
           </Badge>
@@ -176,7 +178,7 @@ export default function ScoutRegistryPage() {
             size="sm"
             onClick={handleLogout}
             leftIcon={<LogOut className="h-3.5 w-3.5" />}
-            className="text-xs font-bold rounded-lg border-slate-200"
+            className="text-xs font-bold rounded-lg border-slate-200 dark:border-[#26344B] text-slate-600 dark:text-[#94A3B8] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
           >
             Sign Out
           </Button>
@@ -186,21 +188,21 @@ export default function ScoutRegistryPage() {
       {/* Main Container */}
       <main className="max-w-5xl mx-auto w-full p-4 sm:p-8 space-y-6 flex-1">
         {/* Scout Desk Hero Banner */}
-        <div className="relative rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50/90 via-white to-teal-50/70 p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 overflow-hidden">
+        <div className="relative rounded-2xl border border-emerald-200/80 dark:border-emerald-900/60 bg-gradient-to-r from-emerald-50/90 via-emerald-100/30 to-teal-50/70 dark:from-emerald-950/40 dark:via-[#111C30] dark:to-teal-950/30 p-6 sm:p-7 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 overflow-hidden">
           <div className="flex items-center gap-4 sm:gap-5">
-            <div className="h-16 w-16 sm:h-18 sm:w-18 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center font-bold text-2xl shadow-md ring-4 ring-white">
+            <div className="h-16 w-16 sm:h-18 sm:w-18 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center font-bold text-2xl shadow-md ring-4 ring-white dark:ring-emerald-900/50">
               <ShieldCheck className="w-8 h-8" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-black text-brand-navy dark:text-[#F8FAFC] tracking-tight">
                   Scout Talent Discovery
                 </h1>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                  <Sparkles className="w-3 h-3 text-emerald-600" /> Live Registry
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                  <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Live Registry
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-[#94A3B8] mt-1">
                 Dumka Sports Academy &bull; Authorized Talent Discovery & Scouting Desk
               </p>
             </div>
@@ -213,7 +215,7 @@ export default function ScoutRegistryPage() {
               onClick={fetchReadyPlayers}
               isLoading={isLoading}
               leftIcon={<RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />}
-              className="text-xs font-bold rounded-xl border-slate-300 bg-white hover:bg-slate-50 shadow-2xs"
+              className="text-xs font-bold rounded-xl border-slate-300 dark:border-[#26344B] bg-white dark:bg-[#111C30] text-slate-700 dark:text-[#F8FAFC] hover:bg-slate-50 dark:hover:bg-[#0B1120] shadow-2xs"
             >
               Refresh Registry
             </Button>
@@ -222,40 +224,40 @@ export default function ScoutRegistryPage() {
 
         {/* 3 Metric Overview Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs space-y-1">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] p-5 shadow-2xs space-y-1">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
               Qualified Talent Pool
             </span>
-            <p className="text-3xl font-black text-brand-navy">{totalCount}</p>
-            <p className="text-xs text-slate-400">Verified trial-ready athletes</p>
+            <p className="text-3xl font-black text-brand-navy dark:text-[#F8FAFC]">{totalCount}</p>
+            <p className="text-xs text-slate-400 dark:text-[#94A3B8]/70">Verified trial-ready athletes</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs space-y-1">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] p-5 shadow-2xs space-y-1">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
               Qualification Criteria
             </span>
-            <p className="text-lg font-black text-emerald-700">≥ 75% Attendance + ≥ 2 Matches</p>
-            <p className="text-xs text-slate-400">Exact unrounded ratio required</p>
+            <p className="text-lg font-black text-emerald-700 dark:text-emerald-400">≥ 75% Attendance + ≥ 2 Matches</p>
+            <p className="text-xs text-slate-400 dark:text-[#94A3B8]/70">Exact unrounded ratio required</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs space-y-1">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] p-5 shadow-2xs space-y-1">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
               Privacy Protection
             </span>
-            <p className="text-lg font-black text-blue-700">Real-Time Revocation</p>
-            <p className="text-xs text-slate-400">Zero access to unready athletes</p>
+            <p className="text-lg font-black text-blue-700 dark:text-blue-400">Real-Time Revocation</p>
+            <p className="text-xs text-slate-400 dark:text-[#94A3B8]/70">Zero access to unready athletes</p>
           </div>
         </div>
 
         {/* Talent Filter & Table Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
-          <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="rounded-2xl border border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] shadow-2xs overflow-hidden">
+          <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-[#26344B] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-black text-brand-navy flex items-center gap-2">
-                <Award className="w-5 h-5 text-emerald-600" />
+              <h2 className="text-base font-black text-brand-navy dark:text-[#F8FAFC] flex items-center gap-2">
+                <Award className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Verified Ready Prospects ({totalCount})
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">
                 Athletes meeting all objective criteria for trial evaluation and scout contact
               </p>
             </div>
@@ -263,7 +265,7 @@ export default function ScoutRegistryPage() {
             {/* Filter and Search Inputs */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <div className="relative w-full sm:w-60">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-[#94A3B8]">
                   <Search className="h-3.5 w-3.5" />
                 </div>
                 <input
@@ -274,7 +276,7 @@ export default function ScoutRegistryPage() {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="flex h-10 w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 py-2 text-xs text-brand-navy shadow-2xs placeholder:text-slate-400 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
+                  className="flex h-10 w-full rounded-xl border border-slate-300 dark:border-[#26344B] bg-white dark:bg-[#0B1120] pl-9 pr-3 py-2 text-xs text-brand-navy dark:text-[#F8FAFC] shadow-2xs placeholder:text-slate-400 dark:placeholder:text-[#94A3B8]/60 focus:border-brand-primary dark:focus:border-[#4B8BFF] focus:outline-hidden focus:ring-2 focus:ring-brand-primary/20"
                 />
               </div>
 
@@ -284,7 +286,7 @@ export default function ScoutRegistryPage() {
                   setSportFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-2xs focus:border-brand-primary focus:outline-none"
+                className="h-10 rounded-xl border border-slate-300 dark:border-[#26344B] bg-white dark:bg-[#0B1120] px-3 py-2 text-xs font-semibold text-slate-700 dark:text-[#F8FAFC] shadow-2xs focus:border-brand-primary dark:focus:border-[#4B8BFF] focus:outline-hidden"
               >
                 <option value="">All Disciplines</option>
                 <option value="football">Football</option>
@@ -570,7 +572,7 @@ export default function ScoutRegistryPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-400">
+      <footer className="border-t border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] py-4 text-center text-xs text-slate-400 dark:text-[#94A3B8]">
         &copy; {new Date().getFullYear()} SportSync &bull; Dumka Sports Academy Management Desk
       </footer>
     </div>

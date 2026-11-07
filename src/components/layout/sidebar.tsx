@@ -66,17 +66,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar Panel */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 dark:border-[#26344B] bg-white dark:bg-[#111C30] transition-transform duration-200 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Header with Logo */}
-        <div className="flex h-16 items-center justify-between px-6 border-b border-slate-100">
+        <div className="flex h-16 items-center justify-between px-6 border-b border-slate-100 dark:border-[#26344B]">
           <SportSyncLogo size="sm" href="/coach" />
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+            className="rounded-lg p-1.5 text-slate-400 dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#0B1120] hover:text-slate-600 dark:hover:text-[#F8FAFC] lg:hidden"
             aria-label="Close menu"
           >
             <X className="h-5 w-5" />
@@ -84,8 +84,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Academy Label */}
-        <div className="px-6 py-3 bg-slate-50/70 border-b border-slate-100">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="px-6 py-3 bg-slate-50/70 dark:bg-[#0B1120]/60 border-b border-slate-100 dark:border-[#26344B]">
+          <p className="text-[11px] font-semibold text-slate-500 dark:text-[#94A3B8] uppercase tracking-wider">
             Academy Desk
           </p>
           <p className="text-xs font-bold text-brand-navy truncate">Dumka Sports Academy</p>
@@ -105,14 +105,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={cn(
                   "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
                   isActive
-                    ? "bg-blue-50 text-brand-primary"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-brand-navy"
+                    ? "bg-blue-50 dark:bg-blue-950/50 text-brand-primary dark:text-[#4B8BFF]"
+                    : "text-slate-600 dark:text-[#94A3B8] hover:bg-slate-50 dark:hover:bg-[#0B1120] hover:text-brand-navy dark:hover:text-[#F8FAFC]"
                 )}
               >
                 <Icon
                   className={cn(
                     "h-4 w-4 transition-colors",
-                    isActive ? "text-brand-primary" : "text-slate-400 group-hover:text-brand-navy"
+                    isActive
+                      ? "text-brand-primary dark:text-[#4B8BFF]"
+                      : "text-slate-400 dark:text-[#94A3B8] group-hover:text-brand-navy dark:group-hover:text-[#F8FAFC]"
                   )}
                 />
                 {item.label}
@@ -122,17 +124,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Dedicated Sign Out Footer Button */}
-        <div className="border-t border-slate-200 p-4 space-y-3">
+        <div className="border-t border-slate-200 dark:border-[#26344B] p-4 space-y-3">
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-100/80 hover:text-rose-700 transition-colors shadow-2xs cursor-pointer"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50/60 dark:bg-rose-950/30 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100/80 dark:hover:bg-rose-900/40 hover:text-rose-700 transition-colors shadow-2xs cursor-pointer"
           >
-            <LogOut className="h-4 w-4 text-rose-500" />
+            <LogOut className="h-4 w-4 text-rose-500 dark:text-rose-400" />
             <span>Sign Out</span>
           </button>
 
-          <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+          <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 px-1">
             <span>Dumka Academy Desk</span>
             <span>v1.0.0</span>
           </div>
