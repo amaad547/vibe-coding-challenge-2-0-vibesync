@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db/mongodb";
 import { requireRole } from "@/lib/auth/session";
 import { Player } from "@/models/Player";
@@ -37,10 +38,14 @@ export async function GET() {
     const readiness = await calculatePlayerReadiness(session.playerId);
 
     // Fetch practice session track record
+    const playerObjectId = new mongoose.Types.ObjectId(session.playerId);
     const practiceSessions = await Session.find({
       sport: player.sport.toLowerCase(),
       status: "CLOSED",
-      date: { $gte: normalizeCalendarDate(player.createdAt) },
+      $or: [
+        { "roster.playerId": playerObjectId },
+        { date: { $gte: normalizeCalendarDate(player.createdAt) } },
+      ],
     })
       .sort({ date: -1 })
       .lean();

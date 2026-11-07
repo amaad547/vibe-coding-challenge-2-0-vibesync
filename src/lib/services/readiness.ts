@@ -96,13 +96,18 @@ export async function calculatePlayerReadiness(playerId: string): Promise<Player
  */
 async function calculateSinglePlayerReadiness(player: IPlayer): Promise<PlayerReadinessResult> {
   const playerId = player._id.toString();
+  const playerObjectId = new mongoose.Types.ObjectId(playerId);
   const playerCreationDateNormalized = normalizeCalendarDate(player.createdAt);
 
-  // 1. Invariant: Closed practice sessions for player's sport since player creation
+  // 1. Invariant: Closed practice sessions for player's sport
+  // Includes sessions where player was rostered, or sessions held on/after player enrollment
   const closedSessions = await Session.find({
     sport: player.sport.toLowerCase(),
     status: "CLOSED",
-    date: { $gte: playerCreationDateNormalized },
+    $or: [
+      { "roster.playerId": playerObjectId },
+      { date: { $gte: playerCreationDateNormalized } },
+    ],
   }).lean();
 
   const heldSessions = closedSessions.length;
@@ -119,7 +124,6 @@ async function calculateSinglePlayerReadiness(player: IPlayer): Promise<PlayerRe
   }
 
   // 2. Invariant: Count of finalized matches in which the player participated
-  const playerObjectId = new mongoose.Types.ObjectId(playerId);
   const matchesPlayed = await Match.countDocuments({
     status: "FINALIZED",
     "participants.playerId": playerObjectId,

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db/mongodb";
 import { Player } from "@/models/Player";
 import { Session } from "@/models/Session";
@@ -23,13 +24,17 @@ export async function calculatePlayerAttendance(
     throw new Error("Player not found.");
   }
 
+  const playerObjectId = new mongoose.Types.ObjectId(player._id.toString());
   const playerCreationDateNormalized = normalizeCalendarDate(player.createdAt);
 
-  // Invariant: Denominator includes only CLOSED sessions for player's sport from player's creation date forward
+  // Invariant: Denominator includes CLOSED sessions for player's sport where player was rostered or held on/after enrollment
   const closedSessions = await Session.find({
     sport: player.sport.toLowerCase(),
     status: "CLOSED",
-    date: { $gte: playerCreationDateNormalized },
+    $or: [
+      { "roster.playerId": playerObjectId },
+      { date: { $gte: playerCreationDateNormalized } },
+    ],
   }).lean();
 
   const held = closedSessions.length;
