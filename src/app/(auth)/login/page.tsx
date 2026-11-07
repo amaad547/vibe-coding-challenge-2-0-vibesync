@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogIn, AlertCircle, Clock, ShieldX, UserPlus, Mail, Lock } from "lucide-react";
+import { LogIn, AlertCircle, Clock, ShieldX, UserPlus, Mail, Lock, KeyRound } from "lucide-react";
 import { SportSyncLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -181,6 +181,70 @@ function LoginForm() {
             </Button>
           </div>
         </form>
+
+        {/* Quick Demo Access Credentials */}
+        <div className="mt-6 pt-5 border-t border-slate-100 dark:border-[#26344B] text-left space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-[#94A3B8] flex items-center gap-1.5">
+              <KeyRound className="w-3.5 h-3.5 text-brand-primary dark:text-[#4B8BFF]" /> Demo Credentials
+            </span>
+            <span className="text-[10px] text-slate-400 dark:text-[#94A3B8]/70">
+              Click to autofill
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            {/* Coach Demo Box */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("coach@dumkasports.org");
+                setPassword("coach@dumka123");
+              }}
+              className="p-2.5 rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/60 dark:bg-blue-950/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/40 text-left transition-all group cursor-pointer shadow-2xs"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-brand-primary dark:text-[#4B8BFF] text-[11px] uppercase tracking-wider">
+                  Coach Desk
+                </span>
+                <span className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold group-hover:underline">
+                  Autofill &rarr;
+                </span>
+              </div>
+              <p className="font-mono text-[11px] text-brand-navy dark:text-[#F8FAFC] truncate">
+                coach@dumkasports.org
+              </p>
+              <p className="font-mono text-[10px] text-slate-500 dark:text-[#94A3B8]">
+                coach@dumka123
+              </p>
+            </button>
+
+            {/* Scout Demo Box */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("scout@dumkasports.org");
+                setPassword("scout@sport123");
+              }}
+              className="p-2.5 rounded-xl border border-emerald-200/80 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/30 hover:bg-emerald-100/70 dark:hover:bg-emerald-900/40 text-left transition-all group cursor-pointer shadow-2xs"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-emerald-700 dark:text-emerald-400 text-[11px] uppercase tracking-wider">
+                  Scout Desk
+                </span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold group-hover:underline">
+                  Autofill &rarr;
+                </span>
+              </div>
+              <p className="font-mono text-[11px] text-brand-navy dark:text-[#F8FAFC] truncate">
+                scout@dumkasports.org
+              </p>
+              <p className="font-mono text-[10px] text-slate-500 dark:text-[#94A3B8]">
+                scout@sport123
+              </p>
+            </button>
+          </div>
+        </div>
 
         {/* Enhanced Player Registration Callout */}
         <div className="mt-8 pt-6 border-t border-slate-100 text-center space-y-3">
